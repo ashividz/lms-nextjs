@@ -83,13 +83,14 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
           <FileUpload
             previousImageUrl={initialData.imageUrl}
             multiple={false}
+            acceptedFileTypes={["image/*"]}
             courseId={initialData.id}
             onChange={(url) => {
               if (url) onSubmit(url);
             }}
           />
           <div className="text-xs text-muted-foreground mt-2">
-            16x9 aspect ratio recommende
+            16x9 aspect ratio recommended
           </div>
         </>
       )}

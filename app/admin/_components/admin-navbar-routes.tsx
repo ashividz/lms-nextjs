@@ -1,6 +1,6 @@
 "use client";
 
-import UserButton from "./user-button";
+import { UserButton } from "@/components/auth/user-button";
 
 const AdminNavbarRoutes = () => {
   return (

@@ -8,6 +8,7 @@ import FilePreviewList from "@/components/upload/file-preview-list";
 interface UploadDropZoneProps {
   updatePrewiewUrls: (previewUrl: string[]) => void;
   multiple?: boolean;
+  acceptedFileTypes: string[];
   updateFile: (file: File[]) => void;
 }
 
@@ -15,6 +16,7 @@ const UploadDropZone = ({
   updatePrewiewUrls,
   updateFile,
   multiple,
+  acceptedFileTypes,
 }: UploadDropZoneProps) => {
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const onFileUploadChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +112,7 @@ const UploadDropZone = ({
               className="block w-0 h-0"
               name="file"
               type="file"
-              accept="image/*, video/*, .pdf"
+              accept={acceptedFileTypes.join(",")}
               onChange={onFileUploadChange}
               multiple={multiple}
             />

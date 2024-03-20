@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { deleteImageFromS3 } from "@/lib/s3utils";
+import { deleteFolderFromS3, deleteImageFromS3 } from "@/lib/s3utils";
 import { uploadFileToS3 } from "@/lib/s3utils";
 
 export async function POST(req: Request) {
@@ -8,6 +8,7 @@ export async function POST(req: Request) {
     const formData = await req.formData();
     const previousImageUrl = formData.get("previousImageUrl") as string | null;
     const courseId = formData.get("courseId") as string | null;
+    const chapterId = formData.get("chapterId") as string | null;
     const isAttachment = formData.get("isAttachment") as boolean | null;
 
     const filesMap: Record<string, File[]> = {};
@@ -27,24 +28,40 @@ export async function POST(req: Request) {
           process.env.AWS_REGION
         }.amazonaws.com/`
       )[1];
+
       await deleteImageFromS3(key);
     }
     let uploadedImageUrls: string[] | null = [];
-    for (const fileName in filesMap) {
+    for (let fileName in filesMap) {
       if (Object.prototype.hasOwnProperty.call(filesMap, fileName)) {
         const files = filesMap[fileName];
-        for (const file of files) {
+        for (let file of files) {
           const fileContent = await file.arrayBuffer();
-          const fileName = isAttachment
-            ? `${courseId}/attachments/${file.name}`
-            : `${courseId}/${file.name}`;
-          const uploadedData = await uploadFileToS3(
-            fileContent as Buffer,
-            fileName
-          );
-          if (uploadedData) {
-            const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
-            uploadedImageUrls.push(imageUrl);
+          // upload image
+          if (chapterId) {
+            const fileName = `${courseId}/chapters/${chapterId}/${file.name}`;
+            const uploadedData = await uploadFileToS3(
+              fileContent as Buffer,
+              file.type,
+              fileName
+            );
+            if (uploadedData) {
+              const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+              uploadedImageUrls.push(imageUrl);
+            }
+          } else {
+            const fileName = isAttachment
+              ? `${courseId}/attachments/${file.name}`
+              : `${courseId}/${file.name}`;
+            const uploadedData = await uploadFileToS3(
+              fileContent as Buffer,
+              file.type,
+              fileName
+            );
+            if (uploadedData) {
+              const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+              uploadedImageUrls.push(imageUrl);
+            }
           }
         }
       }

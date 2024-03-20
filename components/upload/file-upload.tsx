@@ -11,7 +11,9 @@ import UploadButton from "@/components/upload/upload-button";
 interface FileUploadProps {
   previousImageUrl?: string | null;
   courseId?: string | null;
+  chapterId?: string | null;
   isAttachment?: boolean;
+  acceptedFileTypes: string[];
   multiple?: boolean;
   onChange: (fileUrl: string) => void;
 }
@@ -19,7 +21,9 @@ interface FileUploadProps {
 const FileUpload = ({
   previousImageUrl,
   courseId,
+  chapterId,
   isAttachment,
+  acceptedFileTypes,
   multiple,
   onChange,
 }: FileUploadProps) => {
@@ -53,6 +57,7 @@ const FileUpload = ({
       }
       formData.append("previousImageUrl", previousImageUrl || "");
       formData.append("courseId", courseId || "");
+      formData.append("chapterId", chapterId || "");
       if (isAttachment) {
         formData.append("isAttachment", "true");
       }
@@ -93,6 +98,7 @@ const FileUpload = ({
         <UploadDropZone
           updatePrewiewUrls={updatePrewiewUrls}
           multiple={multiple}
+          acceptedFileTypes={acceptedFileTypes}
           updateFile={updateFile}
         />
         <div className="flex items-center justify-center mt-2">

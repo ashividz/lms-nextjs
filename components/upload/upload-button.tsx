@@ -17,7 +17,7 @@ const UploadButton = ({
       <Button
         variant="sky"
         onClick={onClick}
-        disabled={!previewUrls || isUploading}
+        disabled={!previewUrls?.length || isUploading}
         className={cn("", isUploading ? "bg-emerald-500 text-white" : "")}
       >
         {isUploading ? (
