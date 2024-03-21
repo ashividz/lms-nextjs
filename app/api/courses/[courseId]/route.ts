@@ -2,12 +2,17 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { deleteFolderFromS3, deleteImageFromS3 } from "@/lib/s3utils";
+import { currentUser } from "@/lib/auth";
 
 export async function DELETE(
   req: Request,
   { params }: { params: { courseId: string } }
 ) {
   try {
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
     const { courseId } = params;
 
     const course = await db.courses.findUnique({

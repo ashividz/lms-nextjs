@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
+import { currentUser } from "@/lib/auth";
 
 export async function PATCH(
   req: Request,
@@ -11,6 +12,10 @@ export async function PATCH(
   }
 ) {
   try {
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
     const { courseId, chapterId } = params;
     const chapter = await db.chapters.findUnique({
       where: {

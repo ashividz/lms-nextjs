@@ -15,11 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { RegisterSchema } from "@/schemas";
 import { register } from "@/actions/register";
+import { SubmitButton } from "@/components/submit-button";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");
@@ -134,9 +134,7 @@ export const RegisterForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button type="submit" className="w-full">
-            Create an account
-          </Button>
+          <SubmitButton isPending={isPending} submitText="Create an account" />
         </form>
       </Form>
     </CardWrapper>

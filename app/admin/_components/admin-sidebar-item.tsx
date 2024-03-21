@@ -4,6 +4,7 @@ import { LucideIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface AdminSidebarItemProps {
   href: string;
@@ -28,9 +29,8 @@ const AdminSidebarItem = ({
     router.push(href);
   };
   return (
-    <button
-      onClick={onClick}
-      type="button"
+    <Link
+      href={href}
       className={cn(
         "flex items-center gap-x-2 text-sm font-[500] pl-6 transition-all text-sky-700 hover:bg-sky-500/10 hover:text-sky-700",
         isActive && "bg-sky-500 text-white hover:bg-sky-700 hover:text-white"
@@ -46,7 +46,7 @@ const AdminSidebarItem = ({
           isActive && "opacity-100"
         )}
       />
-    </button>
+    </Link>
   );
 };
 

@@ -23,7 +23,14 @@ export const authRoutes = [
  * Routes that start with this prefix are used for API authentication purposes
  * @type {string}
  */
-export const apiAuthPrefix = "/api/auth";
+export const apiAuthPrefix = "/api/";
+
+/**
+ * The prefix for Admin Dashboard routes
+ * Routes that start with this prefix are used for Admin Dashboard purposes
+ * @type {string}
+ */
+export const adminRoutePrefix = "/admin";
 
 /**
  * The default redirect path after logging in

@@ -16,12 +16,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { NewPasswordSchema } from "@/schemas";
 
 import { newPassword } from "@/actions/new-password";
+import { SubmitButton } from "@/components/submit-button";
 
 export const NewPasswordForm = () => {
   const searchParams = useSearchParams();
@@ -80,9 +81,7 @@ export const NewPasswordForm = () => {
           </div>
           <FormError message={error} />
           <FormSuccess message={success} />
-          <Button type="submit" className="w-full">
-            Reset password
-          </Button>
+          <SubmitButton isPending={isPending} submitText="Reset password" />
         </form>
       </Form>
     </CardWrapper>

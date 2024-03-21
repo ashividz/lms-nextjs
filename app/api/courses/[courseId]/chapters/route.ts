@@ -1,3 +1,4 @@
+import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
@@ -6,6 +7,10 @@ export async function POST(
   { params }: { params: { courseId: string } }
 ) {
   try {
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
     const { title } = await req.json();
 
     const lastChapter = await db.chapters.findFirst({

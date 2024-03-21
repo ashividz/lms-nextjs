@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import NextTopLoader from "nextjs-toploader";
 import { SessionProvider } from "next-auth/react";
-import { auth } from "@/auth";
 import "./globals.css";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfettiProvider } from "@/components/providers/confetti-provider";
+import { auth } from "@/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +27,17 @@ export default async function RootLayout({
         <body className={inter.className} suppressHydrationWarning={true}>
           <ConfettiProvider />
           <ToastContainer />
+          <NextTopLoader
+            color="#ff3c28"
+            initialPosition={0.08}
+            crawlSpeed={200}
+            height={3}
+            crawl={false}
+            showSpinner={false}
+            easing="ease"
+            speed={200}
+            shadow="0 0 10px #ff3c28,0 0 5px #ff3c28"
+          />
           {children}
         </body>
       </html>

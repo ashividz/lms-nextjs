@@ -2,9 +2,14 @@ import { NextResponse } from "next/server";
 
 import { deleteFolderFromS3, deleteImageFromS3 } from "@/lib/s3utils";
 import { uploadFileToS3 } from "@/lib/s3utils";
+import { currentUser } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
     const formData = await req.formData();
     const previousImageUrl = formData.get("previousImageUrl") as string | null;
     const courseId = formData.get("courseId") as string | null;

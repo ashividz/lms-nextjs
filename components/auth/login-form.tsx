@@ -3,8 +3,8 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 
 import { CardWrapper } from "@/components/auth/card-wrapper";
@@ -22,9 +22,13 @@ import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { LoginSchema } from "@/schemas";
 import { login } from "@/actions/login";
+import { SubmitButton } from "@/components/submit-button";
+import { getSession } from "next-auth/react";
 
 export const LoginForm = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl");
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider!"
@@ -33,6 +37,7 @@ export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
+  const [isloading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -47,7 +52,8 @@ export const LoginForm = () => {
     setSuccess("");
 
     startTransition(() => {
-      login(values)
+      setIsLoading(true);
+      login(values, callbackUrl)
         .then((data) => {
           if (data?.error) {
             form.reset();
@@ -57,6 +63,16 @@ export const LoginForm = () => {
           if (data?.success) {
             form.reset();
             setSuccess(data.success);
+            const interval = setInterval(async () => {
+              const session = await getSession();
+
+              if (session) {
+                clearInterval(interval);
+                setIsLoading(false);
+                localStorage.setItem("toastDisplayed", "false");
+                router.replace(callbackUrl || "/admin/dashboard");
+              }
+            }, 500);
           }
 
           if (data?.twoFactor) {
@@ -146,10 +162,11 @@ export const LoginForm = () => {
             )}
           </div>
           <FormError message={error || urlError} />
-          <FormSuccess message={success} />
-          <Button type="submit" className="w-full">
-            {showTwoFactor ? "Confirm" : "Login"}
-          </Button>
+          <FormSuccess message={isloading ? "" : success} />
+          <SubmitButton
+            isPending={isPending || isloading}
+            submitText={showTwoFactor ? "Confirm" : "Login"}
+          />
         </form>
       </Form>
     </CardWrapper>

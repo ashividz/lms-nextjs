@@ -2,13 +2,17 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { deleteImageFromS3 } from "@/lib/s3utils";
+import { currentUser } from "@/lib/auth";
 
 export async function DELETE(
   req: Request,
   { params }: { params: { courseId: string; chapterId: string } }
 ) {
   try {
-    //TODO:: Handle video deletion
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
 
     const chapter = await db.chapters.findUnique({
       where: {
