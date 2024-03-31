@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+
 import NextTopLoader from "nextjs-toploader";
 import { SessionProvider } from "next-auth/react";
 import "./globals.css";
@@ -7,8 +7,6 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfettiProvider } from "@/components/providers/confetti-provider";
 import { auth } from "@/auth";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Unitus LMS",
@@ -24,7 +22,7 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={inter.className} suppressHydrationWarning={true}>
+        <body suppressHydrationWarning={true}>
           <ConfettiProvider />
           <ToastContainer />
           <NextTopLoader

@@ -10,6 +10,7 @@ datasource db {
 model Courses {
   id String @id @default(uuid())
   title String @db.Text
+  slug String @unique
   description String? @db.Text
   imageUrl String? @db.Text
   price Float?
@@ -21,6 +22,7 @@ model Courses {
 
   attachements Attachements[]
   chapters Chapters[]
+  faqs Faqs[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -47,6 +49,22 @@ model Attachements{
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt
 
+}
+
+model Faqs{
+  id String @id @default(uuid())
+  title String
+  description String? @db.Text
+  position Int
+  isPublished Boolean @default(false)
+
+  courseId String
+  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+  @@index([courseId])
 }
 
 model Chapters{

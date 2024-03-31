@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { deleteFolderFromS3, deleteImageFromS3 } from "@/lib/s3utils";
 import { currentUser } from "@/lib/auth";
+import { slugify } from "@/lib/slugify";
 
 export async function DELETE(
   req: Request,
@@ -71,12 +72,19 @@ export async function PATCH(
 ) {
   try {
     const { courseId } = params;
-    const values = await req.json();
+    const { title, ...values } = await req.json();
+    let slug: string | undefined;
+    if (title) {
+      slug = slugify(title);
+    }
+
     const course = await db.courses.update({
       where: {
         id: courseId,
       },
       data: {
+        ...(title && { title }),
+        ...(slug && { slug }),
         ...values,
       },
     });
