@@ -1,14 +1,20 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { DataTable } from "./_components/data-table";
+import { columns } from "./_components/columns";
+import { db } from "@/lib/db";
 
-const CoursesPage = () => {
+import { Button } from "@/components/ui/button";
+
+const CoursesPage = async () => {
+  const courses = await db.courses.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
   return (
     <div className="p-6">
-      <Link href="/admin/courses/create">
-        <Button variant="default" size="default">
-          Add New Course
-        </Button>
-      </Link>
+      <DataTable columns={columns} data={courses} />
     </div>
   );
 };

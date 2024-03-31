@@ -83,6 +83,7 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
           <FileUpload
             previousImageUrl={initialData.imageUrl}
             multiple={false}
+            acceptedFileTypes={["image/*"]}
             courseId={initialData.id}
             onChange={(url) => {
               if (url) onSubmit(url);

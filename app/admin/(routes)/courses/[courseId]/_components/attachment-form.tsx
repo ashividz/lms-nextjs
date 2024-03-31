@@ -120,6 +120,7 @@ export const AttachmentForm = ({
           <FileUpload
             courseId={initialData.id}
             isAttachment={true}
+            acceptedFileTypes={["image/*", "video/mp4", "application/pdf"]}
             multiple={true}
             onChange={(urls: string | string[]) => {
               if (urls) {
