@@ -7,16 +7,30 @@ import VideoPlayIcon from "@/components/icons/video-play-icon";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/formatCurrency";
 import CourseFeatureItem from "./course-feature-item";
-import Container from "../container";
+
+import AddToCart from "@/components/cart/add-to-cart";
+import { CartItem } from "@/types/cart-item";
+import { addToCartLocalStorage } from "@/utils/cart-utils";
 
 interface StickySidebarProps {
+  isAuthenticated: boolean;
+  course: CartItem;
   imageUrl: string;
   coursePrice: number;
+  videoUrl: string;
+  isFree: boolean;
 }
 
-const StickySidebar = ({ imageUrl, coursePrice }: StickySidebarProps) => {
+const StickySidebar = ({
+  course,
+  isAuthenticated,
+  imageUrl,
+  coursePrice,
+  videoUrl,
+  isFree,
+}: StickySidebarProps) => {
   return (
-    <div className="sticky w-full top-20 mx-auto sm:px-2 px-4">
+    <div className="sticky z-10 w-full top-20 mx-auto sm:px-2 px-4">
       <div className=" bg-gray-100 p-4 right-0 border-2 border-[#1b88a7] rounded-md transition shadow-md overflow-y-auto">
         {/* Course Preview Options */}
         <div className="mb-4">
@@ -29,7 +43,7 @@ const StickySidebar = ({ imageUrl, coursePrice }: StickySidebarProps) => {
               className="rounded-md object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <VideoPlayIcon />
+              <VideoPlayIcon videoUrl={videoUrl} isFree={isFree} />
             </div>
           </div>
         </div>
@@ -48,9 +62,12 @@ const StickySidebar = ({ imageUrl, coursePrice }: StickySidebarProps) => {
           </div>
         </div>
         {/* Add to Cart Button */}
-        <Button className="bg-blue-500 text-white hover:bg-blue-600 text-md font-bold px-4 py-7 rounded-md mb-2 w-full">
-          Add to Cart
-        </Button>
+        <AddToCart
+          item={course}
+          isAuthenticated={isAuthenticated}
+          addToCart={addToCartLocalStorage}
+          //addToDatabase={addToCartDatabase}
+        />
 
         {/* Buy Now Button */}
         <Button className="bg-green-500 text-white hover:bg-green-600 text-md font-bold px-4 py-7 rounded-md mb-2 w-full">

@@ -10,7 +10,7 @@ import MobileMenuIcon from "@/components/header/mobile-menu-icon";
 
 export const Header = () => {
   return (
-    <header className="fixed w-full bg-white shadow-sm z-10">
+    <header className="fixed w-full bg-white shadow-sm z-20">
       <div className="py-2 border-b-[1px]">
         <Container>
           <div className="flex flex-row items-center justify-between gap-3 md:gap-0 mx-auto">

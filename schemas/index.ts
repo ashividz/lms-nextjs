@@ -1,5 +1,9 @@
 import * as z from "zod";
 
+export const couponSchema = z.object({
+  couponCode: z.string().min(1, { message: "Coupon code is required" }),
+});
+
 export const NewPasswordSchema = z.object({
   password: z.string().min(6, {
     message: "Minimum 6 characters required",
