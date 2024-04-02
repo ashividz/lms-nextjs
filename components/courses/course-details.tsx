@@ -114,7 +114,7 @@ const CourseDetails = ({ course }: CourseDetailsProps) => {
 
   return (
     <div className="relative">
-      <div className="sticky top-0 z-10 bg-white w-full rounded-md shadow-sm transition my-4 py-4 flex overflow-x-auto ">
+      <div className="sticky top-[70px] z-10 bg-white w-full rounded-md shadow-sm transition my-4 py-4 flex overflow-x-auto ">
         {menuItems.map((item) => (
           <MenuItem
             key={item.id}

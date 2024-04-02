@@ -185,3 +185,6 @@ body {
   background: #ffc0c0; /* Color of the scrollbar track */
   border-radius: 10px;
 }
+.relative:hover .transition-transform {
+  transform: translateX(5px); /* Adjust the value as needed */
+}

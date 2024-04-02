@@ -36,23 +36,22 @@ const VideoPopup = ({ videoUrl, onClose }: VideoPopupProps) => {
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 overflow-y-auto">
           <div
-            className="fixed inset-0 bg-black bg-opacity-50"
+            className="fixed inset-0 bg-black bg-opacity-50 z-40"
             onClick={handleOverlayClick}
           ></div>
-          <div className="bg-white p-5 rounded-lg rounded-t-md relative">
-            <button
-              onClick={handleClose}
-              className="absolute top-0 right-0 z-10 p-2 text-gray-700"
-            >
-              <X size={20} />
-            </button>
-            <div
-              className="relative rounded-md overflow-hidden"
-              style={{ width: "785px", height: "440px" }}
-            >
-              <VideoPlayer videoUrl={videoUrl} />
+          <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
+            <div className="bg-white p-5 rounded-lg rounded-t-md relative z-50 max-w-screen-sm mx-auto">
+              <button
+                onClick={handleClose}
+                className="absolute top-0 right-0 z-10 p-2 text-gray-700"
+              >
+                <X size={20} />
+              </button>
+              <div className="relative w-full h-60 md:h-96">
+                <VideoPlayer videoUrl={videoUrl} />
+              </div>
             </div>
           </div>
         </div>

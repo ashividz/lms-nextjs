@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import { StaticImageData } from "next/image";
 
 interface CourseAuthorProps {
   authorName: string;

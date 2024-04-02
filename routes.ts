@@ -3,7 +3,12 @@
  * These routes do not require authentication
  * @type {string[]}
  */
-export const publicRoutes = ["/", "/auth/new-verification"];
+export const publicRoutes = [
+  "/",
+  "/auth/new-verification",
+  "/cart",
+  "/checkout",
+];
 
 /**
  * An array of routes that are used for authentication
@@ -24,6 +29,13 @@ export const authRoutes = [
  * @type {string}
  */
 export const apiAuthPrefix = "/api/";
+
+/**
+ * The prefix for Course routes
+ * Routes that start with this prefix are used for Course management purposes
+ * @type {string}
+ */
+export const coursePrefix = "/course/";
 
 /**
  * The prefix for Admin Dashboard routes

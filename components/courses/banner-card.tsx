@@ -6,7 +6,6 @@ import CourseRatingDetails from "@/components/courses/course-rating-details";
 import CourseBreadcum from "@/components/courses/course-breadcum";
 import CourseAuthor from "@/components/courses/course-author";
 import CourseUpdateDetails from "@/components/courses/course-update-details";
-import StickySidebar from "@/components/courses/sticky-sidebar";
 
 import guestAuthor from "@/public/assets/guest-user.webp";
 
@@ -35,7 +34,6 @@ const BannerCard = ({ course, className }: BannerCardProps) => {
               {course.title}
             </h1>
             <div className="mb-4 lg:mb-0 text-center lg:text-left">
-              {/* Apply margin bottom on smaller screens */}
               {course.description && (
                 <p className="text-gray-700 lg:text-base break-words">
                   {course.description}

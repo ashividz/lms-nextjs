@@ -1,7 +1,6 @@
 "use client";
 
-import Link from "next/link";
-import NavbarItem from "./navbar-item";
+import NavbarItem from "@/components/header/navbar-item";
 
 const navbarItems = [
   {
