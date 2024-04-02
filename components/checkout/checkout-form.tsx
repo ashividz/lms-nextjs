@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+
 import BillingForm from "@/components/checkout/billing-form";
 import ShippingForm from "@/components/checkout/shipping-form";
-import { Switch } from "../ui/switch";
-import { Label } from "../ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const CheckoutForm = () => {
   const [sameAsBilling, setSameAsBilling] = useState(true);
@@ -21,6 +22,7 @@ const CheckoutForm = () => {
             id="shippingDiffrent"
             checked={sameAsBilling}
             onCheckedChange={toggleSameAsBilling}
+            style={{ backgroundColor: sameAsBilling ? "#34D399" : "#8ddffc" }}
           />
           <Label htmlFor="shippingDiffrent">
             Shipping address same as billing address

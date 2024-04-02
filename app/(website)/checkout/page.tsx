@@ -1,15 +1,26 @@
 "use client";
 
-import CartSummary from "@/components/cart/cart-summary";
+import { useState } from "react";
+import { FaArrowRight } from "react-icons/fa";
+
 import CheckoutForm from "@/components/checkout/checkout-form";
 import CheckoutSummary from "@/components/checkout/checkout-summary";
-import PaymentMethodCheckbox from "@/components/checkout/payment-method-checkbox";
-import PaymentMethodSelect from "@/components/checkout/payment-method-select";
+import PaymentMethodSelection from "@/components/checkout/payment-method-selection";
 import Container from "@/components/container";
 import PageTitle from "@/components/sections/page-title";
+import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/cart-context";
 
+import payUIcon from "@/public/assets/payu.png";
+import razorPayIcon from "@/public/assets/razorpay.png";
+
 const CheckoutPage = () => {
+  const [selectedMethod, setSelectedMethod] = useState<string | null>("PayU");
+
+  const handleSelectMethod = (method: string) => {
+    setSelectedMethod(method);
+  };
+
   const { cartItems } = useCart();
   const totalAmount =
     cartItems?.reduce(
@@ -36,11 +47,28 @@ const CheckoutPage = () => {
               <h2 className="text-lg font-semibold mb-4">
                 Select Payment Method
               </h2>
-              <PaymentMethodCheckbox
-                imageSrc="/path/to/image.png"
-                gatewayName="Payment Gateway Name"
-              />
-              <PaymentMethodSelect />
+              <div className="grid grid-cols-2 gap-4">
+                <PaymentMethodSelection
+                  imageSrc={payUIcon}
+                  gatewayName="PayU"
+                  isSelected={selectedMethod === "PayU"}
+                  onSelect={handleSelectMethod}
+                />
+                <PaymentMethodSelection
+                  imageSrc={razorPayIcon}
+                  gatewayName="Razorpay"
+                  isSelected={selectedMethod === "Razorpay"}
+                  onSelect={handleSelectMethod}
+                />
+              </div>
+            </div>
+            <div className="w-full  mt-4 flex justify-end">
+              <Button className="relative bg-gradient-to-r w-full font-bold from-fuchsia-500 to-cyan-500 rounded-md p-6 shadow-sm transition overflow-hidden">
+                <span className="relative flex items-center">
+                  <span className="transition-transform">Pay Now</span>
+                  <FaArrowRight className="ml-2 opacity-100 group-hover:opacity-0 duration-300 transition-transform" />
+                </span>
+              </Button>
             </div>
           </div>
         </div>
