@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfettiProvider } from "@/components/providers/confetti-provider";
 import { auth } from "@/auth";
+import { CartProvider } from "@/context/cart-context";
 
 export const metadata: Metadata = {
   title: "Unitus LMS",
@@ -36,7 +37,7 @@ export default async function RootLayout({
             speed={200}
             shadow="0 0 10px #ff3c28,0 0 5px #ff3c28"
           />
-          {children}
+          <CartProvider>{children}</CartProvider>
         </body>
       </html>
     </SessionProvider>

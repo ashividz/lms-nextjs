@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 
+import { Button } from "@/components/ui/button";
+
 import emptyCart from "@/public/assets/empty-cart.png";
-import { Button } from "../ui/button";
 
 const EmptyCart = () => {
   return (

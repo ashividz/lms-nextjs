@@ -1,21 +1,17 @@
 "use client";
 
-import { LucideIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
-  navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
 interface NavbarItemProps {

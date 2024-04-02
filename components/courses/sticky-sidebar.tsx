@@ -6,14 +6,11 @@ import { MdOutlineRotateLeft } from "react-icons/md";
 import VideoPlayIcon from "@/components/icons/video-play-icon";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/formatCurrency";
-import CourseFeatureItem from "./course-feature-item";
-
+import CourseFeatureItem from "@/components/courses/course-feature-item";
 import AddToCart from "@/components/cart/add-to-cart";
 import { CartItem } from "@/types/cart-item";
-import { addToCartLocalStorage } from "@/utils/cart-utils";
 
 interface StickySidebarProps {
-  isAuthenticated: boolean;
   course: CartItem;
   imageUrl: string;
   coursePrice: number;
@@ -23,7 +20,6 @@ interface StickySidebarProps {
 
 const StickySidebar = ({
   course,
-  isAuthenticated,
   imageUrl,
   coursePrice,
   videoUrl,
@@ -31,16 +27,15 @@ const StickySidebar = ({
 }: StickySidebarProps) => {
   return (
     <div className="sticky z-10 w-full top-20 mx-auto sm:px-2 px-4">
-      <div className=" bg-gray-100 p-4 right-0 border-2 border-[#1b88a7] rounded-md transition shadow-md overflow-y-auto">
-        {/* Course Preview Options */}
+      <div className="bg-gray-100 p-4 right-0 border-2 border-[#1b88a7] rounded-md transition shadow-md overflow-y-auto">
         <div className="mb-4">
           <div className="relative">
             <Image
-              src={imageUrl}
-              alt="Course Preview"
-              width={500}
-              height={500}
-              className="rounded-md object-cover"
+              src={course.imageUrl || "/placeholder.jpg"}
+              alt={course.title || "Course Image"}
+              width={950}
+              height={600}
+              className="rounded-md"
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <VideoPlayIcon videoUrl={videoUrl} isFree={isFree} />
@@ -55,21 +50,13 @@ const StickySidebar = ({
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">
-              <span className="text-webprimary text-lg font-semibold ml-3 color-ping  ">
+              <span className="text-webprimary text-lg font-semibold ml-3 color-ping">
                 Few Seats Left
               </span>
             </h3>
           </div>
         </div>
-        {/* Add to Cart Button */}
-        <AddToCart
-          item={course}
-          isAuthenticated={isAuthenticated}
-          addToCart={addToCartLocalStorage}
-          //addToDatabase={addToCartDatabase}
-        />
-
-        {/* Buy Now Button */}
+        <AddToCart item={course} />
         <Button className="bg-green-500 text-white hover:bg-green-600 text-md font-bold px-4 py-7 rounded-md mb-2 w-full">
           Buy Now
         </Button>

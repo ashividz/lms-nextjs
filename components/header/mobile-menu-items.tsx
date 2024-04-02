@@ -1,7 +1,7 @@
 "use client";
 
-import MenuItem from "./menu-item";
-import { SearchInput } from "./search-input";
+import MenuItem from "@/components/header/menu-item";
+import { SearchInput } from "@/components/header/search-input";
 
 const navbarItems = [
   {

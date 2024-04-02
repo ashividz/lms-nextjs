@@ -1,6 +1,6 @@
 "use client";
 
-import CartSummaryItem from "./cart-summary-item";
+import CartSummaryItem from "@/components/cart/cart-summary-item";
 
 interface CartSummaryProps {
   subTotal: number;
@@ -19,10 +19,10 @@ const CartSummary = ({
     <div className="w-full flex flex-col items-start justify-start">
       <h1 className="text-2xl font-bold mb-4">Cart Summary</h1>
       <div className="flex flex-col w-full">
-        <CartSummaryItem title="Subtotal" value={subTotal} />
+        <CartSummaryItem title="Subtotal" value={subTotal || 0} />
         <CartSummaryItem title="Tax Amount" value={taxAmount || 0} />
         {/* <CartSummaryItem title="Coupon Discount" value={couponDiscount} /> */}
-        <CartSummaryItem title="Grand Total" value={grandTotal} />
+        <CartSummaryItem title="Grand Total" value={grandTotal || 0} />
       </div>
     </div>
   );
