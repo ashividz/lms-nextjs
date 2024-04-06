@@ -3,6 +3,7 @@
 import CartSummaryItem from "@/components/cart/cart-summary-item";
 import { useCart } from "@/context/cart-context";
 import CourseItemInCart from "./course-item-in-cart";
+import { useUserCountry } from "@/context/user-country-context";
 
 interface CartSummaryProps {
   subTotal: number;
@@ -18,6 +19,7 @@ const CheckoutSummary = ({
   grandTotal,
 }: CartSummaryProps) => {
   const { cartItems } = useCart();
+  const { userCountry } = useUserCountry();
   return (
     <div className="w-full flex flex-col items-start justify-start">
       <h1 className="text-2xl font-bold mb-4">Cart Summary</h1>
@@ -26,14 +28,16 @@ const CheckoutSummary = ({
           <CourseItemInCart
             key={item.id}
             title={item.title}
-            price={item.price}
+            price={userCountry === "IN" ? item.price : item.int_price}
             quantity={item.quantity}
           />
         ))}
       </div>
       <div className="flex flex-col w-full">
         <CartSummaryItem title="Subtotal" value={subTotal || 0} />
-        <CartSummaryItem title="Tax Amount" value={taxAmount || 0} />
+        {userCountry === "IN" && (
+          <CartSummaryItem title="Tax Amount" value={taxAmount || 0} />
+        )}
         {/* <CartSummaryItem title="Coupon Discount" value={couponDiscount} /> */}
         <CartSummaryItem title="Grand Total" value={grandTotal || 0} />
       </div>

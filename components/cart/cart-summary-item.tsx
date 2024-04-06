@@ -1,5 +1,6 @@
 "use client";
 
+import { useUserCountry } from "@/context/user-country-context";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { cn } from "@/lib/utils";
 
@@ -9,6 +10,7 @@ interface CartSummaryItemProps {
 }
 
 const CartSummaryItem = ({ title, value }: CartSummaryItemProps) => {
+  const { userCurrency } = useUserCountry();
   return (
     <div
       className={cn(
@@ -33,7 +35,7 @@ const CartSummaryItem = ({ title, value }: CartSummaryItemProps) => {
             title === "Grand Total" ? "font-bold" : ""
           )}
         >
-          {formatCurrency(value, "INR")}
+          {formatCurrency(value, userCurrency)}
         </span>
       </div>
     </div>

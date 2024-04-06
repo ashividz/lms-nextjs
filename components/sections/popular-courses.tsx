@@ -9,6 +9,7 @@ const PopularCourses = async () => {
       title: true,
       slug: true,
       price: true,
+      int_price: true,
       imageUrl: true,
     },
     orderBy: { createdAt: "desc" },

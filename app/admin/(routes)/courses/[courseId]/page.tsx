@@ -18,6 +18,7 @@ import { AttachmentForm } from "./_components/attachment-form";
 import { ChapterForm } from "./_components/chapter-form";
 import { Banner } from "@/components/banner";
 import { CourseActions } from "./_components/course-actions";
+import { FAQForm } from "./_components/faq-form";
 
 const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.courses.findUnique({
@@ -33,6 +34,11 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
       attachements: {
         orderBy: {
           createdAt: "desc",
+        },
+      },
+      faqs: {
+        orderBy: {
+          position: "asc",
         },
       },
     },
@@ -124,6 +130,13 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                 <h2 className="text-md">Resources & attachments</h2>
               </div>
               <AttachmentForm initialData={course} courseId={course.id} />
+            </div>
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={ListChecks} />
+                <h2 className="text-md">Course FAQs</h2>
+              </div>
+              <FAQForm initialData={course} courseId={course.id} />
             </div>
           </div>
         </div>

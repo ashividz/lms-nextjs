@@ -185,10 +185,39 @@ model TwoFactorToken {
 }
 
 model TwoFactorConfirmation {
-  id String @id @default(cuid())
-
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String @id @default(cuid())
+  userId        String
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
 }
+
+
+model Country {
+  id            Int @id @default(autoincrement())
+  name          String
+  countryCode   String
+  capital       String?
+  region        String?
+  currency      String?
+  flag          String?
+  phoneCode     String?
+  states        State[]
+}
+
+model State {
+  id            Int  @id @default(autoincrement())
+  name          String
+  stateCode     String
+  country       Country   @relation(fields: [countryId], references: [id])
+  countryId     Int
+  cities        City[]
+}
+
+model City {
+  id            Int  @id @default(autoincrement())
+  name          String
+  state         State     @relation(fields: [stateId], references: [id])
+  stateId       Int
+}
+

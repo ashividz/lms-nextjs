@@ -1,7 +1,10 @@
 "use client";
 
+import { useUserCountry } from "@/context/user-country-context";
+import { exchangePrice } from "@/lib/exchangePrice";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
 interface CourseItemInCartProps {
   title: string;
@@ -14,6 +17,22 @@ const CourseItemInCart = ({
   price,
   quantity,
 }: CourseItemInCartProps) => {
+  const [itemPrice, setItemPrice] = useState(price);
+  const { userCurrency } = useUserCountry();
+
+  useEffect(() => {
+    const handlePriceExchange = async (price: number, userCurrency: string) => {
+      try {
+        const exchangedValue = await exchangePrice(price, userCurrency);
+        setItemPrice(exchangedValue);
+      } catch (error) {
+        console.error("Error exchanging price:", error);
+        setItemPrice(price);
+      }
+    };
+
+    handlePriceExchange(price, userCurrency);
+  }, [userCurrency, price]);
   return (
     <div
       className={cn(
@@ -39,7 +58,7 @@ const CourseItemInCart = ({
             title === "Grand Total" ? "font-bold" : ""
           )}
         >
-          {formatCurrency(price * quantity, "INR")}
+          {formatCurrency(itemPrice * quantity, userCurrency)}
         </span>
       </div>
     </div>

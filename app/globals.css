@@ -196,3 +196,6 @@ body {
 :focus-visible {
   border-color: #dee3e5;
 }
+.focus\:ring-ring:focus {
+  --tw-ring-color: none !important;
+}

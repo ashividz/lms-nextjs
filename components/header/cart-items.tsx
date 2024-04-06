@@ -3,17 +3,40 @@
 import Image from "next/image";
 import Link from "next/link";
 import { IoMdClose } from "react-icons/io";
+import { useEffect, useState } from "react";
 
 import { useCart } from "@/context/cart-context";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { CartItem } from "@/types/cart-item";
+import { useUserCountry } from "@/context/user-country-context";
+import { exchangePrice } from "@/lib/exchangePrice";
 
 interface CartItemProps {
   item: CartItem;
 }
 
-const CartItem = ({ item }: CartItemProps) => {
+const CartItems = ({ item }: CartItemProps) => {
+  const [itemPrice, setItemPrice] = useState(item.price);
+  const { userCurrency, userCountry } = useUserCountry();
+
+  useEffect(() => {
+    const handlePriceExchange = async (price: number, userCurrency: string) => {
+      try {
+        const exchangedValue = await exchangePrice(price, userCurrency);
+        setItemPrice(exchangedValue);
+      } catch (error) {
+        console.error("Error exchanging price:", error);
+
+        setItemPrice(price);
+      }
+    };
+    if (!userCountry) return;
+    userCountry !== "IN"
+      ? handlePriceExchange(item.int_price, userCurrency)
+      : handlePriceExchange(item.price, userCurrency);
+  }, [userCurrency, userCountry, item.price, item.int_price]);
   const { updateQuantityInCart, removeFromCart } = useCart();
+
   return (
     <div className="flex items-center justify-between border-b border-slate-200 pb-2">
       <div className="flex-shrink-0 mr-4">
@@ -21,8 +44,8 @@ const CartItem = ({ item }: CartItemProps) => {
           <Image
             src={item.imageUrl || "/"}
             alt={item.title}
-            layout="fill"
-            objectFit="contain"
+            width={80}
+            height={80}
           />
         </div>
       </div>
@@ -32,7 +55,7 @@ const CartItem = ({ item }: CartItemProps) => {
             <Link href={`/course/${item.slug}`}>{item.title}</Link>
           </p>
           <p className="pb-2 text-sm">
-            {formatCurrency(item.price * item.quantity, "INR")}
+            {formatCurrency(itemPrice * item.quantity, userCurrency)}
           </p>
           <div className="flex items-center">
             <button
@@ -63,4 +86,4 @@ const CartItem = ({ item }: CartItemProps) => {
   );
 };
 
-export default CartItem;
+export default CartItems;

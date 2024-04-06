@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { MdOutlineRotateLeft } from "react-icons/md";
+import { useEffect, useState } from "react";
 
 import VideoPlayIcon from "@/components/icons/video-play-icon";
 import { Button } from "@/components/ui/button";
@@ -9,22 +10,34 @@ import { formatCurrency } from "@/lib/formatCurrency";
 import CourseFeatureItem from "@/components/courses/course-feature-item";
 import AddToCart from "@/components/cart/add-to-cart";
 import { CartItem } from "@/types/cart-item";
+import { useUserCountry } from "@/context/user-country-context";
+import { exchangePrice } from "@/lib/exchangePrice";
 
 interface StickySidebarProps {
   course: CartItem;
-  imageUrl: string;
-  coursePrice: number;
   videoUrl: string;
   isFree: boolean;
 }
 
-const StickySidebar = ({
-  course,
-  imageUrl,
-  coursePrice,
-  videoUrl,
-  isFree,
-}: StickySidebarProps) => {
+const StickySidebar = ({ course, videoUrl, isFree }: StickySidebarProps) => {
+  const [itemPrice, setItemPrice] = useState<number>(course.price);
+  const { userCurrency, userCountry } = useUserCountry();
+  useEffect(() => {
+    const handlePriceExchange = async (price: number, userCurrency: string) => {
+      try {
+        const exchangedValue = await exchangePrice(price, userCurrency);
+        setItemPrice(exchangedValue);
+      } catch (error) {
+        console.error("Error exchanging price:", error);
+        setItemPrice(price);
+      }
+    };
+    if (!userCountry) return;
+    userCountry !== "IN"
+      ? handlePriceExchange(course.int_price, userCurrency)
+      : handlePriceExchange(course.price, userCurrency);
+  }, [userCurrency, userCountry, course.price, course.int_price]);
+
   return (
     <div className="sticky z-10 w-full top-20 mx-auto sm:px-2 px-4">
       <div className="bg-gray-100 p-4 right-0 border-2 border-[#1b88a7] rounded-md transition shadow-md overflow-y-auto">
@@ -45,7 +58,7 @@ const StickySidebar = ({
         <div className="flex justify-between items-center mb-4">
           <div>
             <h3 className="text-2xl font-bold mb-2">
-              {formatCurrency(coursePrice, "INR")}
+              {formatCurrency(itemPrice, userCurrency)}
             </h3>
           </div>
           <div>

@@ -1,8 +1,9 @@
 "use client";
 
 import { FaArrowRight } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
-import CartItem from "@/components/cart/cart-item";
 import CartSummary from "@/components/cart/cart-summary";
 import CouponCodeForm from "@/components/cart/coupon-code-form";
 import EmptyCart from "@/components/cart/empty-cart";
@@ -11,14 +12,41 @@ import PageTitle from "@/components/sections/page-title";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/cart-context";
 
+import CartItems from "@/components/cart/cart-items";
+import { useUserCountry } from "@/context/user-country-context";
+import { exchangePrice } from "@/lib/exchangePrice";
+
 const CartPage = () => {
   const { cartItems } = useCart();
+  const { userCurrency, userCountry } = useUserCountry();
   const totalAmount =
-    cartItems?.reduce(
-      (total, item) => total + (item.price * item.quantity || 0),
-      0
-    ) || 0;
+    userCountry !== "IN"
+      ? cartItems?.reduce(
+          (total, item) => total + item.int_price * item.quantity,
+          0
+        )
+      : cartItems?.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
+  const [totalPrice, setTotalPrice] = useState(totalAmount);
 
+  useEffect(() => {
+    const handlePriceExchange = async (price: number, userCurrency: string) => {
+      try {
+        const exchangedValue = await exchangePrice(price, userCurrency);
+        setTotalPrice(exchangedValue);
+      } catch (error) {
+        console.error("Error exchanging price:", error);
+        setTotalPrice(price);
+      }
+    };
+    if (!userCountry) return;
+    handlePriceExchange(totalAmount, userCurrency);
+  }, [userCurrency, userCountry, totalAmount]);
+  const subTotal =
+    userCountry !== "IN" ? totalPrice : totalPrice - totalPrice * 0.18;
+  const taxAmount = userCountry !== "IN" ? 0 : totalPrice * 0.18;
   return (
     <div className="w-full bg-slate-100 pb-20">
       <PageTitle title="Cart" className="py-12" />
@@ -55,7 +83,7 @@ const CartPage = () => {
                   <tbody>
                     {cartItems &&
                       cartItems.map((item) => (
-                        <CartItem key={item.id} item={item} />
+                        <CartItems key={item.id} item={item} />
                       ))}
                   </tbody>
                 </table>
@@ -68,9 +96,9 @@ const CartPage = () => {
               </div>
               <div className="w-full md:w-2/5 bg-white rounded-md p-4 shadow-sm transition">
                 <CartSummary
-                  subTotal={totalAmount - totalAmount * 0.18}
-                  taxAmount={totalAmount * 0.18}
-                  grandTotal={totalAmount}
+                  subTotal={subTotal}
+                  taxAmount={taxAmount}
+                  grandTotal={totalPrice}
                 />
               </div>
             </div>
@@ -78,7 +106,7 @@ const CartPage = () => {
               <Button className="relative bg-gradient-to-r md:w-[35%] font-bold from-fuchsia-500 to-cyan-500 rounded-md p-6 shadow-sm transition overflow-hidden">
                 <span className="relative flex items-center">
                   <span className="transition-transform">
-                    Proceed to Checkout
+                    <Link href="/checkout">Proceed to Checkout</Link>
                   </span>
                   <FaArrowRight className="ml-2 opacity-100 group-hover:opacity-0 duration-300 transition-transform" />
                 </span>

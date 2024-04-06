@@ -8,12 +8,37 @@ import { useCart } from "@/context/cart-context";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { CartItem } from "@/types/cart-item";
 
+import { useEffect, useState } from "react";
+import { useUserCountry } from "@/context/user-country-context";
+import { exchangePrice } from "@/lib/exchangePrice";
+
 interface CartItemProps {
   item: CartItem;
 }
 
-const CartItem = ({ item }: CartItemProps) => {
+const CartItems = ({ item }: CartItemProps) => {
+  const [itemPrice, setItemPrice] = useState(item.price);
+  const { userCurrency, userCountry } = useUserCountry();
+
+  useEffect(() => {
+    const handlePriceExchange = async (price: number, userCurrency: string) => {
+      try {
+        const exchangedValue = await exchangePrice(price, userCurrency);
+        setItemPrice(exchangedValue);
+      } catch (error) {
+        console.error("Error exchanging price:", error);
+        // Handle the error here if needed
+        setItemPrice(price); // Return the original price in case of error
+      }
+    };
+    if (!userCountry) return;
+    userCountry !== "IN"
+      ? handlePriceExchange(item.int_price, userCurrency)
+      : handlePriceExchange(item.price, userCurrency);
+  }, [userCurrency, userCountry, item.price, item.int_price]);
+
   const { updateQuantityInCart, removeFromCart } = useCart();
+
   return (
     <>
       <tr key={item.id} className="text-center bg-white">
@@ -31,7 +56,7 @@ const CartItem = ({ item }: CartItemProps) => {
           <Link href={`/course/${item.slug}`}>{item.title}</Link>
         </td>
         <td className="border border-b border-r px-4 py-2">
-          {formatCurrency(item.price, "INR")}
+          {formatCurrency(itemPrice, userCurrency)}
         </td>
         <td className="border border-b border-r px-4 py-2 text-center">
           <div className="flex flex-col md:flex-row items-center justify-center">
@@ -51,7 +76,7 @@ const CartItem = ({ item }: CartItemProps) => {
           </div>
         </td>
         <td className="border border-b border-r px-4 py-2">
-          {formatCurrency(item.price * item.quantity, "INR")}
+          {formatCurrency(itemPrice * item.quantity, userCurrency)}
         </td>
         <td className="border border-b border-r px-4 py-2">
           <button
@@ -66,4 +91,4 @@ const CartItem = ({ item }: CartItemProps) => {
   );
 };
 
-export default CartItem;
+export default CartItems;

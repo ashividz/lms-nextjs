@@ -1,8 +1,10 @@
 "use client";
+
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
 import {
   Form,
@@ -14,8 +16,111 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { billingSchema } from "@/schemas";
+import { City, Country, State } from "@/types/country-state-city";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Image from "next/image";
+import { useUserCountry } from "@/context/user-country-context";
 
 const BillingForm = () => {
+  const { userCountry } = useUserCountry();
+  const [countries, setCountries] = useState<Country[]>([]);
+  const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
+  const [selectedCountryCode, setSelectedCountryCode] =
+    useState<Country | null>(null);
+  const [states, setStates] = useState<State[]>([]);
+  const [selectedState, setSelectedState] = useState<State | null>(null);
+  const [cities, setCities] = useState<City[]>([]);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
+  const [countriesFetched, setCountriesFetched] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("/api/countries");
+        const countries = response.data;
+        setCountries(countries);
+        setCountriesFetched(true);
+      } catch (error: any) {
+        console.error("Error fetching countries:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (countriesFetched) {
+      getCurrentCountry();
+    }
+  });
+
+  useEffect(() => {
+    if (selectedCountry) {
+      fetchStates(selectedCountry.id);
+    }
+  }, [selectedCountry]);
+
+  const getCurrentCountry = async () => {
+    try {
+      const selectedCountry = countries.filter(
+        (country) => country.countryCode === userCountry
+      )[0];
+      setSelectedCountry(
+        selectedCountry !== undefined ? selectedCountry : null
+      );
+      setSelectedCountryCode(
+        selectedCountryCode !== undefined ? selectedCountryCode : null
+      );
+    } catch (error) {
+      console.error("Error fetching current country:", error);
+    }
+  };
+  const handleCountryChange = (country: Country) => {
+    setSelectedCountry(country);
+    setSelectedState(null);
+    setSelectedCity(null);
+    fetchStates(country.id);
+  };
+
+  const handleCountryCodeChange = (country: Country) => {
+    setSelectedCountryCode(country);
+  };
+
+  const fetchStates = async (countryId: number) => {
+    try {
+      const response = await axios.get(`/api/states?countryId=${countryId}`);
+      const statesData = response.data;
+      setStates(statesData);
+    } catch (error: any) {
+      throw new Error("Error fetching states:", error);
+    }
+  };
+  const fetchCities = async (stateId: number) => {
+    try {
+      const response = await axios.get(`/api/cities?stateId=${stateId}`);
+      const citiesData = response.data;
+      setCities(citiesData);
+    } catch (error: any) {
+      throw new Error("Error fetching cities:", error);
+    }
+  };
+  const handleStateChange = (state: State) => {
+    setSelectedState(state);
+    fetchCities(state.id);
+    setSelectedCity(null);
+  };
+
+  const handleCityChange = (city: City) => {
+    setSelectedCity(city);
+  };
+
   const form = useForm<z.infer<typeof billingSchema>>({
     resolver: zodResolver(billingSchema),
     defaultValues: {
@@ -104,12 +209,58 @@ const BillingForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="Phone Number"
-                      {...field}
-                      className="w-full h-12 rounded-md"
-                    />
+                    <>
+                      <div className="flex items-center">
+                        <div className="w-1/6 mr-2">
+                          <Select
+                            onValueChange={(value) => {
+                              const selectedCountryCode = countries.find(
+                                (c) => c.phoneCode === value
+                              ) as Country;
+                              handleCountryCodeChange(selectedCountryCode);
+                            }}
+                            value={
+                              selectedCountryCode
+                                ? selectedCountryCode.countryCode
+                                : ""
+                            }
+                          >
+                            <SelectTrigger className="w-full h-12">
+                              <SelectValue placeholder="Select a country" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {countries.map((country: Country) => {
+                                return (
+                                  <SelectItem
+                                    key={country.countryCode}
+                                    value={country.countryCode}
+                                  >
+                                    <div className="flex items-center">
+                                      <Image
+                                        src={country.flag || ""}
+                                        alt="flag"
+                                        width={24}
+                                        height={24}
+                                        className="mr-2"
+                                      />
+                                      {country.phoneCode}
+                                    </div>
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="w-5/6">
+                          <Input
+                            disabled={isSubmitting}
+                            placeholder="Phone Number"
+                            {...field}
+                            className="w-full h-12 rounded-md"
+                          />
+                        </div>
+                      </div>
+                    </>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -142,29 +293,31 @@ const BillingForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="Address"
-                      {...field}
-                      className="w-full h-12 rounded-md"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="City"
-                      {...field}
-                      className="w-full h-12 rounded-md"
-                    />
+                    <Select
+                      onValueChange={(value) => {
+                        const selectedCountry = countries.find(
+                          (c) => c.countryCode === value
+                        ) as Country;
+                        handleCountryChange(selectedCountry);
+                      }}
+                      value={selectedCountry ? selectedCountry.countryCode : ""}
+                    >
+                      <SelectTrigger className="w-full h-12">
+                        <SelectValue placeholder="Select a country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {countries.map((country: Country) => {
+                          return (
+                            <SelectItem
+                              key={country.countryCode}
+                              value={country.countryCode}
+                            >
+                              {country.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -176,12 +329,63 @@ const BillingForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="State"
-                      {...field}
-                      className="w-full h-12 rounded-md"
-                    />
+                    <Select
+                      onValueChange={(value) => {
+                        const selectedState = states.find(
+                          (s) => s.name === value
+                        ) as State;
+                        handleStateChange(selectedState);
+                      }}
+                      value={selectedState ? selectedState.name : ""}
+                      disabled={!selectedCountry}
+                    >
+                      <SelectTrigger className="w-full h-12">
+                        <SelectValue placeholder="Select a state" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {states.map((state: State) => {
+                          return (
+                            <SelectItem key={state.id} value={state.name}>
+                              {state.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="city"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Select
+                      onValueChange={(value) => {
+                        const selectedCity = cities.find(
+                          (city) => city.name === value
+                        ) as City;
+                        handleCityChange(selectedCity);
+                      }}
+                      value={selectedCity ? selectedCity.name : ""}
+                      disabled={!selectedState}
+                    >
+                      <SelectTrigger className="w-full h-12">
+                        <SelectValue placeholder="Select a city" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {cities.map((city: City) => {
+                          return (
+                            <SelectItem key={city.id} value={city.name}>
+                              {city.name}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

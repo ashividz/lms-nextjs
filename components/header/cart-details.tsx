@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import CartItem from "@/components/header/cart-item";
+import CartItems from "@/components/header/cart-items";
 import EmptyCart from "@/components/cart/empty-cart";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/cart-context";
@@ -16,7 +16,7 @@ const CartDetails = () => {
       ) : (
         <>
           {cartItems.map((item) => (
-            <CartItem key={item.id} item={item} />
+            <CartItems key={item.id} item={item} />
           ))}
           <div className="mb-24 mt-auto">
             {cartItems.length > 0 && (
