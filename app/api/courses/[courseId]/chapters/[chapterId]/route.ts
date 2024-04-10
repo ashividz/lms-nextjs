@@ -69,6 +69,10 @@ export async function PATCH(
   { params }: { params: { courseId: string; chapterId: string } }
 ) {
   try {
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
     const { isPublished, ...values } = await req.json();
     const chapter = await db.chapters.update({
       where: {
@@ -80,7 +84,6 @@ export async function PATCH(
       },
     });
 
-    //TODO:: Handle video upload
     return NextResponse.json(chapter, { status: 200 });
   } catch (error) {
     console.log("[COURSE_ID]", error);

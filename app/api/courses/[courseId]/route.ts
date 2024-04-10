@@ -71,6 +71,10 @@ export async function PATCH(
   { params }: { params: { courseId: string } }
 ) {
   try {
+    const user = await currentUser();
+    if (!user || user.role !== "ADMIN") {
+      return NextResponse.json("Unauthorized", { status: 401 });
+    }
     const { courseId } = params;
     const { title, ...values } = await req.json();
     let slug: string | undefined;
@@ -86,6 +90,24 @@ export async function PATCH(
         ...(title && { title }),
         ...(slug && { slug }),
         ...values,
+      },
+    });
+    return NextResponse.json(course, { status: 200 });
+  } catch (error) {
+    console.log("[COURSE_ID]", error);
+    return NextResponse.json("Internal Server Error", { status: 500 });
+  }
+}
+
+export async function GET(
+  req: Request,
+  { params }: { params: { courseId: string } }
+) {
+  try {
+    const { courseId } = params;
+    const course = await db.courses.findUnique({
+      where: {
+        id: courseId,
       },
     });
     return NextResponse.json(course, { status: 200 });

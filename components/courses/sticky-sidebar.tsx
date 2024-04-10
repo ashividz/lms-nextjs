@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { MdOutlineRotateLeft } from "react-icons/md";
+import { useEffect, useState } from "react";
 
 import VideoPlayIcon from "@/components/icons/video-play-icon";
 import { Button } from "@/components/ui/button";
@@ -9,22 +10,50 @@ import { formatCurrency } from "@/lib/formatCurrency";
 import CourseFeatureItem from "@/components/courses/course-feature-item";
 import AddToCart from "@/components/cart/add-to-cart";
 import { CartItem } from "@/types/cart-item";
+import { useUserCountry } from "@/context/user-country-context";
+import { exchangePrice } from "@/lib/exchangePrice";
+import Link from "next/link";
+import { Categories, Chapters, Courses, Faqs } from "@prisma/client";
+import { CourseProgress } from "../course-progress";
+
+type CourseWithProgressWithCategory = Courses & {
+  category: Categories | null;
+  chapters: Chapters[];
+  faqs: Faqs[];
+  progress: number | null;
+};
 
 interface StickySidebarProps {
-  course: CartItem;
-  imageUrl: string;
-  coursePrice: number;
-  videoUrl: string;
-  isFree: boolean;
+  course: CourseWithProgressWithCategory;
+  cartItems: CartItem;
+  className?: string;
 }
 
-const StickySidebar = ({
-  course,
-  imageUrl,
-  coursePrice,
-  videoUrl,
-  isFree,
-}: StickySidebarProps) => {
+// interface StickySidebarProps {
+//   course: CartItem;
+//   videoUrl: string;
+//   isFree: boolean;
+// }
+
+const StickySidebar = ({ course, cartItems }: StickySidebarProps) => {
+  const [itemPrice, setItemPrice] = useState<number>(course.price!);
+  const { userCurrency, userCountry } = useUserCountry();
+  useEffect(() => {
+    const handlePriceExchange = async (price: number, userCurrency: string) => {
+      try {
+        const exchangedValue = await exchangePrice(price, userCurrency);
+        setItemPrice(exchangedValue);
+      } catch (error) {
+        console.error("Error exchanging price:", error);
+        setItemPrice(price);
+      }
+    };
+    if (!userCountry) return;
+    userCountry !== "IN"
+      ? handlePriceExchange(course.int_price!, userCurrency)
+      : handlePriceExchange(course.price!, userCurrency);
+  }, [userCurrency, userCountry, course.price, course.int_price]);
+
   return (
     <div className="sticky z-10 w-full top-20 mx-auto sm:px-2 px-4">
       <div className="bg-gray-100 p-4 right-0 border-2 border-[#1b88a7] rounded-md transition shadow-md overflow-y-auto">
@@ -38,15 +67,26 @@ const StickySidebar = ({
               className="rounded-md"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <VideoPlayIcon videoUrl={videoUrl} isFree={isFree} />
+              <VideoPlayIcon
+                videoUrl={course.chapters?.[0]?.videoUrl}
+                isFree={course.chapters?.[0]?.isFree}
+              />
             </div>
           </div>
         </div>
         <div className="flex justify-between items-center mb-4">
-          <div>
-            <h3 className="text-2xl font-bold mb-2">
-              {formatCurrency(coursePrice, "INR")}
-            </h3>
+          <div className="">
+            {course.progress !== null ? (
+              <CourseProgress
+                variant={course.progress === 100 ? "success" : "default"}
+                size="sm"
+                value={course.progress}
+              />
+            ) : (
+              <h3 className="text-2xl font-bold mb-2">
+                {formatCurrency(itemPrice, userCurrency)}
+              </h3>
+            )}
           </div>
           <div>
             <h3 className="text-lg font-semibold mb-2">
@@ -56,10 +96,14 @@ const StickySidebar = ({
             </h3>
           </div>
         </div>
-        <AddToCart item={course} />
-        <Button className="bg-green-500 text-white hover:bg-green-600 text-md font-bold px-4 py-7 rounded-md mb-2 w-full">
-          Buy Now
-        </Button>
+        {course.progress !== null ? (
+          <Button className="bg-green-500 text-white hover:bg-green-600 text-md font-bold px-4 py-7 rounded-md mb-2 w-full">
+            <Link href={`/courses/${course.slug}`}>Go to course</Link>
+          </Button>
+        ) : (
+          <AddToCart item={cartItems} />
+        )}
+
         <p className="flex items-center justify-center text-muted-foreground text-md text-center text-gray-600">
           <MdOutlineRotateLeft className="w-4 h-4 mr-1" />
           15 days money back guarantee

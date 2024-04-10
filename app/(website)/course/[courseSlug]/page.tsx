@@ -1,8 +1,10 @@
+import { getCourseBySlug } from "@/actions/get-course";
+import { getCourses } from "@/actions/get-courses";
+import { getProgress } from "@/actions/get-progress";
 import BannerCard from "@/components/courses/banner-card";
 import CoursePage from "@/components/courses/course-page";
 import RelatedCourseSlider from "@/components/courses/related-course-slider";
 import StickySidebar from "@/components/courses/sticky-sidebar";
-import { useCurrentUser } from "@/hooks/use-current-user";
 import { currentUser } from "@/lib/auth";
 
 import { db } from "@/lib/db";
@@ -14,40 +16,31 @@ const SingleCoursePage = async ({
 }) => {
   const slug = params.courseSlug;
 
-  const relatedCourses = await db.courses.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
   const user = await currentUser();
-  const isAuthenticated = !!user;
+  if (!user) {
+    const userId = undefined;
+  }
 
-  const course = await db.courses.findUnique({
-    include: {
-      chapters: {
-        orderBy: {
-          position: "asc", // Sort chapters by position in ascending order
-        },
-      },
-      faqs: {
-        orderBy: {
-          position: "asc", // Sort FAQs by position in ascending order
-        },
-      },
-    },
-    where: { slug },
-  });
+  const userId = user?.id;
+
+  const relatedCourses = await getCourses({});
+
+  const course = await getCourseBySlug({ courseSlug: slug as string });
+
   if (!course) {
     throw new Error("Course not found");
   }
-  const { id, title, price, imageUrl } = course;
+  const { id, title, price, int_price, imageUrl } = course;
   const validPrice = typeof price === "number" ? price : 0;
+  const validIntPrice = typeof int_price === "number" ? int_price : 0;
   const courseDataSendToCart = {
     id,
     title,
     price: validPrice,
+    int_price: validIntPrice,
     imageUrl,
     quantity: 1,
+    type: "course",
     slug,
   };
   return (
@@ -61,14 +54,7 @@ const SingleCoursePage = async ({
           <CoursePage course={course} />
         </div>
         <div className="w-full lg:w-2/6 lg:pr-20">
-          <StickySidebar
-            course={courseDataSendToCart}
-            isAuthenticated={isAuthenticated}
-            imageUrl={course.imageUrl || ""}
-            coursePrice={course.price || 0}
-            videoUrl={course.chapters[0]?.videoUrl || ""}
-            isFree={course.chapters[0]?.isFree}
-          />
+          <StickySidebar course={course} cartItems={courseDataSendToCart} />
         </div>
       </div>
       <RelatedCourseSlider relatedCourses={relatedCourses} />

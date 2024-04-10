@@ -1,5 +1,56 @@
 import * as z from "zod";
 
+export const checkoutSchema = z.object({
+  billing_firstName: z.string().min(1, { message: "First Name is required" }),
+  billing_lastName: z.string().min(1, { message: "Last Name is required" }),
+  billing_email: z.string().email({
+    message: "Billing Email is required",
+  }),
+  billing_phoneNumber: z
+    .string()
+    .min(10, { message: "Phone number is required" })
+    .max(12, { message: "Phone number must be maximum 12 digits" })
+    .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
+  billing_address: z.string().min(1, { message: "Address is required" }),
+  billing_country: z.string().min(1),
+  billing_city: z.string().min(1),
+  billing_state: z.string().min(1),
+  billing_zip: z.string().min(1, { message: "Zip Code is required" }),
+  shipping_firstName: z.string().min(1, { message: "First Name is required" }),
+  shipping_lastName: z.string().min(1, { message: "Last Name is required" }),
+  shipping_email: z.string().email({
+    message: "Email is required",
+  }),
+  shipping_phoneNumber: z
+    .string()
+    .min(10, { message: "Phone number is required" })
+    .max(12, { message: "Phone number must be maximum 12 digits" })
+    .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
+  shipping_address: z.string().min(1, { message: "Address is required" }),
+  shipping_country: z.string().min(1),
+  shipping_city: z.string().min(1),
+  shipping_state: z.string().min(1),
+  shipping_zip: z.string().min(1, { message: "Zip Code is required" }),
+});
+
+export const billingSchema = z.object({
+  billing_firstName: z.string().min(1, { message: "First Name is required" }),
+  billing_lastName: z.string().min(1, { message: "Last Name is required" }),
+  billing_email: z.string().email({
+    message: "Billing Email is required",
+  }),
+  billing_phoneNumber: z
+    .string()
+    .min(10, { message: "Phone number is required" })
+    .max(12, { message: "Phone number must be maximum 12 digits" })
+    .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
+  billing_address: z.string().min(1, { message: "Address is required" }),
+  billing_country: z.string().min(1),
+  billing_city: z.string().min(1),
+  billing_state: z.string().min(1),
+  billing_zip: z.string().min(1, { message: "Zip Code is required" }),
+});
+
 export const couponSchema = z.object({
   couponCode: z.string().min(1, { message: "Coupon code is required" }),
 });

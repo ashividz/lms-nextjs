@@ -23,6 +23,10 @@ model Courses {
   attachements Attachements[]
   chapters Chapters[]
   faqs Faqs[]
+  item Item[]
+  purchases Purchase[]
+  
+
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -81,6 +85,7 @@ model Chapters{
 
   muxData MuxData[]
   userProgress UserProgress[]
+  
 
   createdAt DateTime @default(now())
   updateAt DateTime @updatedAt
@@ -117,6 +122,30 @@ model UserProgress{
   @@unique([userId,chapterId])
 }
 
+model Purchase {
+  id String @id @default(uuid())
+  userId String
+
+  courseId String
+  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt()
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model StripeCustomer {
+  id String @id @default(uuid())
+  userId String @unique
+  stripeCustomerId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
 enum UserRole{
   ADMIN
   USER
@@ -132,6 +161,9 @@ model User {
   password      String?
   role          UserRole @default(USER)
   accounts      Account[]
+  order         Order[]
+  billingAddress BillingAddress[]
+  shippingAddress ShippingAddress[]
   isTwoFactorEnabled Boolean @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
   
@@ -185,10 +217,115 @@ model TwoFactorToken {
 }
 
 model TwoFactorConfirmation {
-  id String @id @default(cuid())
-
-  userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id            String @id @default(cuid())
+  userId        String
+  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
+}
+
+
+model Country {
+  id            Int @id @default(autoincrement())
+  name          String
+  countryCode   String
+  capital       String?
+  region        String?
+  currency      String?
+  flag          String?
+  phoneCode     String?
+  states        State[]
+}
+
+model State {
+  id            Int  @id @default(autoincrement())
+  name          String
+  stateCode     String
+  country       Country   @relation(fields: [countryId], references: [id])
+  countryId     Int
+  cities        City[]
+}
+
+model City {
+  id            Int  @id @default(autoincrement())
+  name          String
+  state         State     @relation(fields: [stateId], references: [id])
+  stateId       Int
+}
+
+enum PaymentStatus{
+  Processing
+  Failed
+  Success
+  Cancelled
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  description String
+  price       Float
+  item        Item[]
+
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Order {
+  id            String    @id @default(cuid())
+  subTotal      Float?
+  taxTotal      Float?
+  totalAmount   Float?
+  currency      String?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  paymentMethod   String?
+  paymentStatus   PaymentStatus @default(Processing)
+  items         Item[]
+  sameAsBilling Boolean @default(true)  
+  
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+
+}
+model Item {
+  id          String   @id @default(cuid())
+  orderId     String?
+  order       Order? @relation(fields: [orderId], references: [id])
+
+
+  itemName    String
+  quantity    Int @default(1)
+  price       Float?
+  int_price   Float?
+  type        String?   
+  courseId    String?
+  productId   String?
+  course      Courses? @relation(fields: [courseId], references: [id])
+  product     Product? @relation(fields: [productId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model BillingAddress {
+  id         String @id @default(cuid())
+  userId     String
+  user       User @relation(fields: [userId], references: [id])
+  country    String
+  state      String
+  city       String
+  address    String @db.Text
+  zip        String
+}
+
+model ShippingAddress {
+  id         String @id @default(cuid())
+  userId     String
+  user       User @relation(fields: [userId], references: [id])
+  country    String
+  state      String
+  city       String
+  address    String @db.Text
+  zip        String
 }

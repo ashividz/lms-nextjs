@@ -6,7 +6,7 @@ import Container from "@/components/container";
 import PageBreadcum from "../page-breadcum";
 
 interface PageTitleProps {
-  title?: string;
+  title: string;
   className?: string;
 }
 
@@ -24,7 +24,7 @@ export default function PageTitle({ title, className }: PageTitleProps) {
             <h2 className="text-2xl lg:text-3xl xl:text-5xl mb-6 font-bold transition-all duration-1000 ease-in-out transform animate-slide-in">
               {title}
             </h2>
-            <PageBreadcum currentPage="Cart" />
+            <PageBreadcum currentPage={title} />
           </div>
         </div>
       </Container>

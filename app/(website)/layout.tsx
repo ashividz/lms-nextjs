@@ -9,7 +9,6 @@ const WebsiteLayout = ({ children }: { children: React.ReactNode }) => {
       <Header />
       <MobileMenu />
       <main className="pt-[70px] h-full">{children}</main>
-
       <ScrollToTopButton />
       <Footer />
     </div>

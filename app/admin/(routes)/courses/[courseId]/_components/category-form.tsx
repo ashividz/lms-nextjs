@@ -12,9 +12,17 @@ import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Combobox } from "@/components/ui/combobox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 
 import { Courses } from "@prisma/client";
+import Image from "next/image";
 
 interface CategoryFormProps {
   initialData: Courses;
@@ -110,7 +118,20 @@ export const CategoryForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox options={options} {...field} />
+                    <Select onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full h-12">
+                        <SelectValue placeholder="Select a category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {options.map((option) => {
+                          return (
+                            <SelectItem key={option.label} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                 </FormItem>
               )}

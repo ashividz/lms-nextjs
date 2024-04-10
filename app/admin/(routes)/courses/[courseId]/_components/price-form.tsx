@@ -10,7 +10,13 @@ import { useState } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { formatCurrency } from "@/lib/formatCurrency";
@@ -24,6 +30,7 @@ interface PriceFormProps {
 
 const formSchema = z.object({
   price: z.coerce.number(),
+  int_price: z.coerce.number(),
 });
 
 export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
@@ -37,6 +44,7 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       price: initialData.price || undefined,
+      int_price: initialData.int_price || undefined,
     },
   });
 
@@ -82,16 +90,30 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
         </Button>
       </div>
       {!isEditing && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.price && "italic text-slate-500"
-          )}
-        >
-          {initialData.price
-            ? formatCurrency(initialData.price, "INR")
-            : "No price set yet"}
-        </p>
+        <>
+          <p
+            className={cn(
+              "text-sm mt-2",
+              !initialData.price && "italic text-slate-500"
+            )}
+          >
+            <span className="font-bold mr-2">Indian price : </span>
+            {initialData.price
+              ? formatCurrency(initialData.price, "INR")
+              : "No indian price set yet"}
+          </p>
+          <p
+            className={cn(
+              "text-sm mt-2",
+              !initialData.price && "italic text-slate-500"
+            )}
+          >
+            <span className="font-bold mr-2">International price : </span>
+            {initialData.int_price
+              ? formatCurrency(initialData.int_price, "USD")
+              : "No international price set yet"}
+          </p>
+        </>
       )}
       {isEditing && (
         <Form {...form}>
@@ -105,13 +127,36 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      type="number"
-                      step={0.01}
-                      disabled={isSubmitting}
-                      {...field}
-                      placeholder="Set your course price"
-                    />
+                    <>
+                      <FormLabel>Indian Price</FormLabel>
+                      <Input
+                        type="number"
+                        step={0.01}
+                        disabled={isSubmitting}
+                        {...field}
+                        placeholder="Set your course price for Indian students"
+                      />
+                    </>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="int_price"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <>
+                      <FormLabel>International Price</FormLabel>
+                      <Input
+                        type="number"
+                        step={0.01}
+                        disabled={isSubmitting}
+                        {...field}
+                        placeholder="Set your course price for international students"
+                      />
+                    </>
                   </FormControl>
                 </FormItem>
               )}

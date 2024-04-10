@@ -1,19 +1,10 @@
+import { getCourses } from "@/actions/get-courses";
 import Container from "@/components/container";
 import CourseCard from "@/components/courses/course-card";
 import { db } from "@/lib/db";
 
 const PopularCourses = async () => {
-  const courses = await db.courses.findMany({
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      price: true,
-      imageUrl: true,
-    },
-    orderBy: { createdAt: "desc" },
-    where: { isPublished: true },
-  });
+  const courses = await getCourses({});
 
   return (
     <div className="w-full flex items-center justify-center pt-12 pb-10 mt-10 mb-10 bg-[#f9f9ff]">

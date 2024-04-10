@@ -5,32 +5,17 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import CourseContainer from "@/components/courses/course-container";
 import CourseDetails from "@/components/courses/course-details";
+import { Categories, Chapters, Courses, Faqs } from "@prisma/client";
+
+type CourseWithProgressWithCategory = Courses & {
+  category: Categories | null;
+  chapters: Chapters[];
+  faqs: Faqs[];
+  progress: number | null;
+};
 
 interface CoursePageProps {
-  course: {
-    title: string;
-    description: string | null;
-    imageUrl: string | null;
-    price: number | null;
-    chapters: {
-      id: string;
-      title: string;
-      description: string | null;
-      videoUrl: string | null;
-      position: number;
-      isPublished: boolean;
-      isFree: boolean;
-      createdAt: Date;
-    }[];
-    faqs: {
-      id: string;
-      title: string;
-      description: string | null;
-      position: number;
-      isPublished: boolean;
-      createdAt: Date;
-    }[];
-  };
+  course: CourseWithProgressWithCategory;
   className?: string;
 }
 
