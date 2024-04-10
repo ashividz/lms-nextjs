@@ -1,7 +1,11 @@
+import { getCourseBySlug } from "@/actions/get-course";
+import { getCourses } from "@/actions/get-courses";
+import { getProgress } from "@/actions/get-progress";
 import BannerCard from "@/components/courses/banner-card";
 import CoursePage from "@/components/courses/course-page";
 import RelatedCourseSlider from "@/components/courses/related-course-slider";
 import StickySidebar from "@/components/courses/sticky-sidebar";
+import { currentUser } from "@/lib/auth";
 
 import { db } from "@/lib/db";
 
@@ -12,33 +16,17 @@ const SingleCoursePage = async ({
 }) => {
   const slug = params.courseSlug;
 
-  const relatedCourses = await db.courses.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const user = await currentUser();
+  if (!user) {
+    const userId = undefined;
+  }
 
-  const course = await db.courses.findUnique({
-    include: {
-      chapters: {
-        orderBy: {
-          position: "asc", // Sort chapters by position in ascending order
-        },
-        where: {
-          isPublished: true, // Only include chapters that are published
-        },
-      },
-      faqs: {
-        orderBy: {
-          position: "asc", // Sort FAQs by position in ascending order
-        },
-        where: {
-          isPublished: true, // Only include FAQs that are published
-        },
-      },
-    },
-    where: { slug },
-  });
+  const userId = user?.id;
+
+  const relatedCourses = await getCourses({});
+
+  const course = await getCourseBySlug({ courseSlug: slug as string });
+
   if (!course) {
     throw new Error("Course not found");
   }
@@ -52,6 +40,7 @@ const SingleCoursePage = async ({
     int_price: validIntPrice,
     imageUrl,
     quantity: 1,
+    type: "course",
     slug,
   };
   return (
@@ -65,11 +54,7 @@ const SingleCoursePage = async ({
           <CoursePage course={course} />
         </div>
         <div className="w-full lg:w-2/6 lg:pr-20">
-          <StickySidebar
-            course={courseDataSendToCart}
-            videoUrl={course.chapters[0]?.videoUrl || ""}
-            isFree={course.chapters[0]?.isFree}
-          />
+          <StickySidebar course={course} cartItems={courseDataSendToCart} />
         </div>
       </div>
       <RelatedCourseSlider relatedCourses={relatedCourses} />

@@ -118,7 +118,7 @@ export const CategoryForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Select {...field} onValueChange={field.onChange}>
+                    <Select onValueChange={field.onChange}>
                       <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Select a category" />
                       </SelectTrigger>

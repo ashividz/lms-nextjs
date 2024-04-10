@@ -1,39 +1,54 @@
 import * as z from "zod";
 
-export const shippingSchema = z.object({
-  firstName: z.string().min(1, { message: "First Name is required" }),
-  lastName: z.string().min(1, { message: "Last Name is required" }),
-  email: z.string().email({
-    message: "Email is required",
+export const checkoutSchema = z.object({
+  billing_firstName: z.string().min(1, { message: "First Name is required" }),
+  billing_lastName: z.string().min(1, { message: "Last Name is required" }),
+  billing_email: z.string().email({
+    message: "Billing Email is required",
   }),
-  phoneNumber: z
+  billing_phoneNumber: z
     .string()
     .min(10, { message: "Phone number is required" })
     .max(12, { message: "Phone number must be maximum 12 digits" })
     .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
-  address: z.string().min(1, { message: "Address is required" }),
-  country: z.string().min(1, { message: "Country is required" }),
-  city: z.string().min(1, { message: "City is required" }),
-  state: z.string().min(1, { message: "State is required" }),
-  zip: z.string().min(1, { message: "Zip Code is required" }),
+  billing_address: z.string().min(1, { message: "Address is required" }),
+  billing_country: z.string().min(1),
+  billing_city: z.string().min(1),
+  billing_state: z.string().min(1),
+  billing_zip: z.string().min(1, { message: "Zip Code is required" }),
+  shipping_firstName: z.string().min(1, { message: "First Name is required" }),
+  shipping_lastName: z.string().min(1, { message: "Last Name is required" }),
+  shipping_email: z.string().email({
+    message: "Email is required",
+  }),
+  shipping_phoneNumber: z
+    .string()
+    .min(10, { message: "Phone number is required" })
+    .max(12, { message: "Phone number must be maximum 12 digits" })
+    .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
+  shipping_address: z.string().min(1, { message: "Address is required" }),
+  shipping_country: z.string().min(1),
+  shipping_city: z.string().min(1),
+  shipping_state: z.string().min(1),
+  shipping_zip: z.string().min(1, { message: "Zip Code is required" }),
 });
 
 export const billingSchema = z.object({
-  firstName: z.string().min(1, { message: "First Name is required" }),
-  lastName: z.string().min(1, { message: "Last Name is required" }),
-  email: z.string().email({
-    message: "Email is required",
+  billing_firstName: z.string().min(1, { message: "First Name is required" }),
+  billing_lastName: z.string().min(1, { message: "Last Name is required" }),
+  billing_email: z.string().email({
+    message: "Billing Email is required",
   }),
-  phoneNumber: z
+  billing_phoneNumber: z
     .string()
     .min(10, { message: "Phone number is required" })
     .max(12, { message: "Phone number must be maximum 12 digits" })
     .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
-  address: z.string().min(1, { message: "Address is required" }),
-  country: z.string().min(1, { message: "Country is required" }),
-  city: z.string().min(1, { message: "City is required" }),
-  state: z.string().min(1, { message: "State is required" }),
-  zip: z.string().min(1, { message: "Zip Code is required" }),
+  billing_address: z.string().min(1, { message: "Address is required" }),
+  billing_country: z.string().min(1),
+  billing_city: z.string().min(1),
+  billing_state: z.string().min(1),
+  billing_zip: z.string().min(1, { message: "Zip Code is required" }),
 });
 
 export const couponSchema = z.object({

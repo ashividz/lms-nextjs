@@ -1,10 +1,23 @@
+import { getCourses } from "@/actions/get-courses";
 import Container from "@/components/container";
 import CourseCard from "@/components/courses/course-card";
 import PageTitle from "@/components/sections/page-title";
+import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { Categories, Courses } from "@prisma/client";
+
+type CourseWithProgressWithCategory = Courses & {
+  category: Categories | null;
+  chapters: { id: string }[];
+  progress: number | null;
+};
+
+interface CourseWithProgress {
+  courses: CourseWithProgressWithCategory;
+}
 
 const CoursesPage = async () => {
-  const courses = await db.courses.findMany({});
+  const courses = await getCourses({});
 
   return (
     <div>

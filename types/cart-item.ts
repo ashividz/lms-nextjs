@@ -6,4 +6,5 @@ export interface CartItem {
   price: number;
   int_price: number;
   quantity: number;
+  type?: string | null;
 }

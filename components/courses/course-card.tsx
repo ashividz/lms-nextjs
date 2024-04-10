@@ -8,16 +8,17 @@ import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/formatCurrency";
 import { useUserCountry } from "@/context/user-country-context";
 import { exchangePrice } from "@/lib/exchangePrice";
+import { Categories, Courses } from "@prisma/client";
+import { CourseProgress } from "../course-progress";
+
+type CourseWithProgressWithCategory = Courses & {
+  category: Categories | null;
+  chapters: { id: string }[];
+  progress: number | null;
+};
 
 interface CourseCardProps {
-  course: {
-    id: string;
-    title: string;
-    slug: string;
-    imageUrl?: string | null;
-    price?: number | null;
-    int_price?: number | null;
-  };
+  course: CourseWithProgressWithCategory;
 }
 
 const CourseCard = ({ course }: CourseCardProps) => {
@@ -68,10 +69,20 @@ const CourseCard = ({ course }: CourseCardProps) => {
           <div className="px-6 py-4 min-h-24">
             <div className="font-bold text-xl mb-2">{course.title}</div>
           </div>
-          {itemPrice && (
+          {course.progress !== null ? (
             <div className="px-6 pt-4 pb-2">
               <div className="font-semibold text-xl text-emerald-800">
-                {formatCurrency(itemPrice, userCurrency)}
+                <CourseProgress
+                  variant={course.progress === 100 ? "success" : "default"}
+                  size="sm"
+                  value={course.progress}
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="px-6 pt-4 pb-2">
+              <div className="font-semibold text-xl text-emerald-800">
+                {formatCurrency(itemPrice as number, userCurrency)}
               </div>
             </div>
           )}

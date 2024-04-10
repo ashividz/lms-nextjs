@@ -20,6 +20,7 @@ const PaymentMethodSelection = ({
         type="radio"
         className="hidden"
         checked={isSelected}
+        name="paymentMethod"
         onChange={() => onSelect(gatewayName)}
       />
       <div

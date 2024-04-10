@@ -9,6 +9,7 @@ import CourseFaqs from "@/components/courses/course-faqs";
 import Coursefaculty from "@/components/courses/course-faculty";
 import CourseCareer from "@/components/courses/course-career";
 import CourseOverview from "@/components/courses/course-overview";
+import { Categories, Chapters, Courses, Faqs } from "@prisma/client";
 
 const menuItems = [
   {
@@ -37,31 +38,15 @@ const menuItems = [
   },
 ];
 
+type CourseWithProgressWithCategory = Courses & {
+  category: Categories | null;
+  chapters: Chapters[];
+  faqs: Faqs[];
+  progress: number | null;
+};
+
 interface CourseDetailsProps {
-  course: {
-    title: string;
-    description: string | null;
-    imageUrl: string | null;
-    price: number | null;
-    chapters: {
-      id: string;
-      title: string;
-      description: string | null;
-      videoUrl: string | null;
-      position: number;
-      isPublished: boolean;
-      isFree: boolean;
-      createdAt: Date;
-    }[];
-    faqs: {
-      id: string;
-      title: string;
-      description: string | null;
-      position: number;
-      isPublished: boolean;
-      createdAt: Date;
-    }[];
-  };
+  course: CourseWithProgressWithCategory;
 }
 
 const CourseDetails = ({ course }: CourseDetailsProps) => {
@@ -92,7 +77,6 @@ const CourseDetails = ({ course }: CourseDetailsProps) => {
 
     const observer = new IntersectionObserver(handleIntersect, observerOptions);
 
-    // Observe each section
     Object.values(sectionRefs).forEach((ref) => {
       if (ref.current) {
         observer.observe(ref.current);
