@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-
+import { userType } from "@/types/user-type";
 import MenuItem from "./menu-item";
 import {
   BookOpenText,
@@ -11,6 +10,8 @@ import {
   ShoppingBag,
   UserRound,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useUser } from "@/context/user-context";
 
 const userMenu = [
   {
@@ -46,12 +47,17 @@ const userMenu = [
 ];
 
 const StickySidebar = () => {
+  const { userData } = useUser();
   return (
-    <div className="sticky z-10 w-full top-20 mx-auto sm:px-2 px-4">
-      <div className="bg-gray-100 p-4 right-0 border-2 border-[#1b88a7] rounded-md transition shadow-md overflow-y-auto">
+    <div className="sticky z-10 w-full top-20 mx-auto sm:px-2 px-4 bg-white rounded-md transition shadow-md">
+      <div className=" p-4 right-0 overflow-y-auto">
         <div className="mb-4">
-          <div className="mx-auto w-full flex border-b pb-3 pl-6">
-            <h1 className="text-2xl font-bold">Welcome, Satendra Singh</h1>
+          <div className="mx-auto w-full flex border-b pb-3 pl-1">
+            {userData?.name ? (
+              <h1 className="text-2xl font-bold">Welcome, {userData?.name}</h1>
+            ) : (
+              <Skeleton className="h-4 w-full rounded-xl" />
+            )}
           </div>
           {userMenu.map((item) => (
             <MenuItem
