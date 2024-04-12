@@ -18,52 +18,46 @@ import { toast } from "react-toastify";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import { userType } from "@/types/user-type";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/context/user-context";
 
-interface UserProfileProps {
-  user: userType | null;
-}
-
-const UserProfile = ({ user }: UserProfileProps) => {
+const UserProfile = () => {
   const router = useRouter();
-  const { updateUser } = useUser();
-  const [formReady, setFormReady] = useState(false);
+  const { updateUser, userData } = useUser();
   const form = useForm<z.infer<typeof userProfileSchema>>({
     resolver: zodResolver(userProfileSchema),
   });
   const { isSubmitting, isValid } = form.formState;
   useEffect(() => {
-    if (user) {
-      const fullName = user.name?.split(" ");
-      let firstName = "";
-      let lastName = "";
+    const defaultValues = {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phoneNumber: "",
+      qualification: "",
+      profession: "",
+      bio: "",
+    };
 
+    if (userData) {
+      const fullName = userData.name?.split(" ");
       if (fullName && fullName.length >= 1) {
-        firstName = fullName[0];
+        defaultValues.firstName = fullName[0];
       }
-
-      // Combine remaining parts as last name
       if (fullName && fullName.length > 1) {
-        lastName = fullName.slice(1).join(" ");
+        defaultValues.lastName = fullName.slice(1).join(" ");
       }
-      const defaultValues = {
-        firstName: firstName ?? "",
-        lastName: lastName ?? "",
-        email: user.email ?? "",
-        phoneNumber: user.phoneNumber ?? "",
-        qualification: user.qualification ?? "",
-        profession: user.profession ?? "",
-        bio: user.bio ?? "",
-      };
-
-      form.reset(defaultValues);
-      setFormReady(true);
+      defaultValues.email = userData.email ?? "";
+      defaultValues.phoneNumber = userData.phoneNumber ?? "";
+      defaultValues.qualification = userData.qualification ?? "";
+      defaultValues.profession = userData.profession ?? "";
+      defaultValues.bio = userData.bio ?? "";
     }
-  }, [user, form]);
+
+    form.reset(defaultValues);
+  }, [userData, form]);
 
   const onSubmit = async (values: z.infer<typeof userProfileSchema>) => {
     try {
@@ -81,7 +75,7 @@ const UserProfile = ({ user }: UserProfileProps) => {
       });
     }
   };
-  if (!formReady) {
+  if (!userData) {
     return (
       <div className="space-y-8 mt-4 w-full">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

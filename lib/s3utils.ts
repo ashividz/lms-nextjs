@@ -35,7 +35,6 @@ export const uploadFileToS3 = async (
   }
 };
 export const deleteImageFromS3 = async (imageUrl: string) => {
-  console.log(imageUrl);
   const params = {
     Bucket: process.env.AWS_BUCKET_NAME as string,
     Key: `${imageUrl}`,

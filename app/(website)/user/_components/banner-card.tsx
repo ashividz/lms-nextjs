@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { CameraIcon } from "lucide-react";
+import { CameraIcon, Loader2 } from "lucide-react";
 import { FaBookBookmark } from "react-icons/fa6";
 import { PiCertificate } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
@@ -11,17 +11,17 @@ import { cn } from "@/lib/utils";
 import { userType } from "@/types/user-type";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useUser } from "@/context/user-context";
+import UploadProfilePic from "./upload-profile-pic";
+import { formatDate } from "@/lib/formatDate";
 
 interface BannerCardProps {
   className?: string;
 }
 
 const BannerCard = ({ className }: BannerCardProps) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const { userData } = useUser();
-  const handleImageChange = () => {
-    // Logic to open the file select dialog
-    console.log("Open file select dialog");
-  };
 
   return (
     <div className={cn("w-full sticky top-[70px] z-10", className)}>
@@ -30,30 +30,50 @@ const BannerCard = ({ className }: BannerCardProps) => {
           <div className="m-8 flex flex-col lg:flex-row items-center justify-start">
             <div className="mr-4 relative">
               <div className="mb-4 lg:mb-0 text-center lg:text-left ">
-                <Image
-                  src={
-                    userData?.image
-                      ? userData?.image
-                      : "/assets/default-student.jpg"
-                  }
-                  alt="Default Student"
-                  width={180}
-                  height={100}
-                  className="relative rounded-full border-4 border-sky-100"
-                />
-                <div className="absolute bottom-1 right-4">
-                  <button className="flex items-center justify-center bg-gray-800 text-white p-2 rounded-full">
-                    <label htmlFor="image-upload" title="Upload Image">
-                      <input
-                        id="image-upload"
-                        type="file"
-                        className="hidden cursor-pointer"
-                        onChange={handleImageChange}
+                {userData ? (
+                  imagePreview ? (
+                    <div className="relative">
+                      <Image
+                        src={imagePreview}
+                        alt="User Image"
+                        width={180}
+                        height={180}
+                        priority
+                        className="rounded-full border-4 border-sky-100"
+                        style={{
+                          filter: isUploading ? "blur(4px)" : "none",
+                          opacity: isUploading ? "0.5" : "1",
+                        }}
                       />
-                      <CameraIcon className="w-4 h-4 cursor-pointer" />
-                    </label>
-                  </button>
-                </div>
+
+                      {isUploading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Loader2 className="w-6 h-6 animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Image
+                      src={
+                        userData?.image
+                          ? userData?.image
+                          : "/assets/default-student.jpg"
+                      }
+                      alt="Default Student"
+                      width={180}
+                      height={180}
+                      priority
+                      className="relative rounded-full border-4 border-sky-100"
+                    />
+                  )
+                ) : (
+                  <Skeleton className="w-44 h-44 rounded-full" />
+                )}
+
+                <UploadProfilePic
+                  setImagePreview={setImagePreview}
+                  setIsUploading={setIsUploading}
+                />
               </div>
             </div>
 
@@ -69,33 +89,38 @@ const BannerCard = ({ className }: BannerCardProps) => {
                 {userData?.email ? (
                   <p className="text-sky-100 mb-2">{userData?.email}</p>
                 ) : (
-                  <Skeleton className="h-5 w-[300px] rounded-xl" />
+                  <Skeleton className="h-5 w-[280px] rounded-xl" />
                 )}
 
-                {/* Render the "5 Courses Enrolled" text */}
                 <p className="text-sky-100 mr-4">
                   <FaBookBookmark className="inline w-4 h-4 mr-2" />5 Courses
                   Enrolled
                 </p>
-              </div>
-              <div className="flex flex-col lg:flex-row items-start lg:items-center ml-0 lg:ml-4 mt-4 lg:mt-0">
                 <p className="text-sky-100 mr-4 mt-2 lg:mt-0">
                   <PiCertificate className="inline w-4 h-4 mr-2" />4
                   Certificates
                 </p>
-                <p className="text-sky-100 mt-2 lg:mt-0 text-muted-foreground">
-                  <SlCalender className="inline w-3 h-3 mr-2" /> Registered on
-                  Jan 18 2024
-                </p>
+
+                {userData?.createdAt ? (
+                  <p className="text-sky-100 mt-2 lg:mt-0 text-muted-foreground">
+                    <SlCalender className="inline w-3 h-3 mr-2" />
+                    <span className="mr-2">Registered on</span>
+                    {formatDate(userData?.createdAt)}
+                  </p>
+                ) : (
+                  <Skeleton className="h-5 w-[250px] rounded-xl" />
+                )}
               </div>
+              <div className="ml-0 lg:ml-4 mt-4 lg:mt-0"></div>
             </div>
           </div>
           <div className="m-0 lg:ml-10 mt-8 lg:mt-0 hidden lg:block items-end justify-end text-end">
             <Image
-              src={"/assets/student.png"}
+              src="/assets/student.png"
               alt="Banner Card"
               width={300}
               height={300}
+              priority
               className="mr-10"
             />
           </div>

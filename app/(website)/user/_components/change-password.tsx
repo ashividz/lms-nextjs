@@ -13,9 +13,9 @@ import { changePasswordSchema } from "@/schemas";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Button } from "@/components/ui/button";
 const ChangePassword = () => {
   const router = useRouter();
@@ -30,17 +30,26 @@ const ChangePassword = () => {
   const { isSubmitting, isValid } = form.formState;
   const onSubmit = async (values: z.infer<typeof changePasswordSchema>) => {
     try {
-      const response = await axios.post("/api/courses", values);
-      router.push(`/admin/courses/${response.data.id}`);
-      toast.success("Course created successfully", {
+      const response = await axios.post("/api/user/change-password", values);
+      router.push(`/user/profile/`);
+      toast.success(response.data, {
         position: "top-center",
         autoClose: 5000,
       });
-    } catch {
-      toast.error("Something went wrong while creating course", {
-        position: "top-center",
-        autoClose: 5000,
-      });
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        console.error("Axios Error:", error.response?.data || error.message);
+        toast.error(error.response?.data || error.message, {
+          position: "top-center",
+          autoClose: 5000,
+        });
+      } else {
+        console.error("Error:", error.message);
+        toast.error(error.message, {
+          position: "top-center",
+          autoClose: 5000,
+        });
+      }
     }
   };
   return (
@@ -56,6 +65,7 @@ const ChangePassword = () => {
                   <FormItem>
                     <FormControl>
                       <Input
+                        type="password"
                         disabled={isSubmitting}
                         placeholder="Current Password"
                         {...field}
@@ -73,6 +83,7 @@ const ChangePassword = () => {
                   <FormItem>
                     <FormControl>
                       <Input
+                        type="password"
                         disabled={isSubmitting}
                         placeholder="New Password"
                         {...field}
@@ -91,6 +102,7 @@ const ChangePassword = () => {
                   <FormItem>
                     <FormControl>
                       <Input
+                        type="password"
                         disabled={isSubmitting}
                         placeholder="Confirm Password"
                         {...field}

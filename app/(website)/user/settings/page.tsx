@@ -3,30 +3,12 @@
 import ChangePassword from "../_components/change-password";
 import Tabs from "../_components/tabs";
 import UserProfile from "../_components/user-profile";
-import { useEffect, useState } from "react";
-import { userType } from "@/types/user-type";
-import axios from "axios";
 
 const SettingsPage = () => {
-  const [userData, setUserData] = useState<null | userType>(null);
-
-  const fetchUser = async () => {
-    const user = await axios.get("/api/user");
-    setUserData(user.data);
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
   const tabs = [
     {
       label: "User Profile",
-      content: (
-        <div>
-          <UserProfile user={userData} />
-        </div>
-      ),
+      content: <UserProfile />,
     },
     {
       label: "Change Password",
