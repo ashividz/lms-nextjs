@@ -19,6 +19,9 @@ import { ChapterForm } from "./_components/chapter-form";
 import { Banner } from "@/components/banner";
 import { CourseActions } from "./_components/course-actions";
 import { FAQForm } from "./_components/faq-form";
+import { CourseDetailsForm } from "./_components/course-details-form";
+import { CourseMetaDataForm } from "./_components/course-meta-data-form";
+import { FacultyAssignForm } from "./_components/faculty-assign-form";
 
 const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const course = await db.courses.findUnique({
@@ -51,6 +54,14 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
   const categories = await db.categories.findMany({
     orderBy: {
       name: "asc",
+    },
+  });
+  const faculties = await db.faculty.findMany({
+    orderBy: {
+      name: "asc",
+    },
+    where: {
+      isPublished: true,
     },
   });
 
@@ -108,6 +119,17 @@ const CourseIdPage = async ({ params }: { params: { courseId: string } }) => {
                 value: category.id,
               }))}
             />
+            <FacultyAssignForm
+              initialData={course}
+              courseId={course.id}
+              options={faculties.map((faculty) => ({
+                label: faculty.name,
+                value: faculty.id,
+              }))}
+            />
+
+            <CourseMetaDataForm initialData={course} courseId={course.id} />
+            <CourseDetailsForm initialData={course} courseId={course.id} />
           </div>
           <div className="space-y-6">
             <div>

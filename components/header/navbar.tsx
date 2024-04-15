@@ -11,49 +11,7 @@ const navbarItems = [
   {
     label: "Courses",
     href: "/courses",
-    hasChild: true,
-    children: [
-      {
-        label: "Course 1",
-        href: "/course-1",
-      },
-      {
-        label: "Course 2",
-        href: "/course-2",
-      },
-      {
-        label: "Course 3",
-        href: "/course-3",
-      },
-      {
-        label: "Course 4",
-        href: "/course-4",
-      },
-      {
-        label: "Course 5",
-        href: "/course-5",
-      },
-      {
-        label: "Course 6",
-        href: "/course-6",
-      },
-      {
-        label: "Course 7",
-        href: "/course-7",
-      },
-      {
-        label: "Course 8",
-        href: "/course-8",
-      },
-      {
-        label: "Course 9",
-        href: "/course-9",
-      },
-      {
-        label: "Course 10",
-        href: "/course-10",
-      },
-    ],
+    hasChild: false,
   },
   {
     label: "Alumni",
@@ -61,8 +19,8 @@ const navbarItems = [
     hasChild: false,
   },
   {
-    label: "Students Speaks",
-    href: "/students-speak",
+    label: "Student Speaks",
+    href: "/student-speaks",
     hasChild: false,
   },
   {
@@ -71,8 +29,8 @@ const navbarItems = [
     hasChild: false,
   },
   {
-    label: "Online Workshop",
-    href: "/online-workshop",
+    label: "Faculty",
+    href: "/faculty",
     hasChild: false,
   },
 ];

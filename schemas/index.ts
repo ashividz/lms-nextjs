@@ -12,6 +12,28 @@ export const changePasswordSchema = z.object({
   }),
 });
 
+export const careerFormSchema = z.object({
+  name: z.string().min(1, { message: "Name is required" }),
+  email: z.string().email({
+    message: "Billing Email is required",
+  }),
+  phoneNumber: z
+    .string()
+    .min(10, { message: "Phone number is required" })
+    .max(12, { message: "Phone number must be maximum 12 digits" })
+    .regex(/^\d{10,12}$/, { message: "Invalid phone number" }),
+  qualification: z
+    .string()
+    .min(1, { message: "Your Qualification is required" }),
+  positionApplied: z.string().min(1),
+  country: z.string().min(1),
+  city: z.string().min(1),
+  state: z.string().min(1),
+  zip: z.string().min(1, { message: "Zip Code is required" }),
+  bio: z.string().min(1, { message: "Your bio is required" }),
+  resumeFile: z.any(),
+});
+
 export const userProfileSchema = z.object({
   firstName: z.string().min(1, { message: "First Name is required" }),
   lastName: z.string().min(1, { message: "Last Name is required" }),

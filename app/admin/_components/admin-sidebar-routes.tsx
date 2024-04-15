@@ -1,6 +1,11 @@
 "use client";
 
-import { BookOpenText, LayoutDashboard, UsersRoundIcon } from "lucide-react";
+import {
+  BookOpenText,
+  LayoutDashboard,
+  UserRoundSearch,
+  UsersRoundIcon,
+} from "lucide-react";
 import AdminSidebarItem from "./admin-sidebar-item";
 
 const routes = [
@@ -18,6 +23,11 @@ const routes = [
     icon: UsersRoundIcon,
     label: "Faculties",
     href: "/admin/faculties",
+  },
+  {
+    icon: UserRoundSearch,
+    label: "Testimonials",
+    href: "/admin/testimonials",
   },
 ];
 

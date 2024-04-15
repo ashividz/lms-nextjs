@@ -1,41 +1,83 @@
-import { Html } from "@react-email/html";
-import { Text } from "@react-email/text";
-import { Section } from "@react-email/section";
-import { Container } from "@react-email/container";
+import React from "react";
 
-export default function VerificationEmail() {
-  return (
-    <Html>
-      <Section style={main}>
-        <Container style={container}>
-          <Text style={heading}>Hi there!</Text>
-          <Text style={paragraph}>Welcome to our app!</Text>
-        </Container>
-      </Section>
-    </Html>
-  );
+interface EmailTemplateProps {
+  name: string;
 }
 
-// Styles for the email template
-const main = {
-  backgroundColor: "#ffffff",
+const EmailTemplate: React.FC<EmailTemplateProps> = ({ name }) => {
+  return (
+    <div
+      style={{
+        fontFamily: "Arial, sans-serif",
+        maxWidth: "600px",
+        margin: "0 auto",
+        padding: "20px",
+      }}
+    >
+      <div
+        style={{
+          backgroundColor: "#f0f0f0",
+          padding: "20px",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            backgroundImage: 'url("/unitus-logo.png")',
+            backgroundSize: "cover",
+            width: "200px",
+            height: "100px",
+            margin: "0 auto",
+          }}
+        />
+        <h1 style={{ fontSize: "24px", marginTop: "20px" }}>Hi {name},</h1>
+      </div>
+      <div style={{ padding: "20px" }}>
+        <p style={{ fontSize: "16px" }}>
+          Welcome to our newsletter! We&apos;re excited to have you on board.
+        </p>
+        <p style={{ fontSize: "16px" }}>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+          eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+      </div>
+      <div
+        style={{
+          backgroundColor: "#f0f0f0",
+          padding: "20px",
+          textAlign: "center",
+        }}
+      >
+        <p style={{ fontSize: "16px" }}>Follow us on social media:</p>
+        <a
+          href="https://example.com/facebook"
+          style={{
+            textDecoration: "none",
+            color: "#000000",
+            marginRight: "10px",
+          }}
+        >
+          Facebook
+        </a>
+        <a
+          href="https://example.com/twitter"
+          style={{
+            textDecoration: "none",
+            color: "#000000",
+            marginRight: "10px",
+          }}
+        >
+          Twitter
+        </a>
+        <a
+          href="https://example.com/instagram"
+          style={{ textDecoration: "none", color: "#000000" }}
+        >
+          Instagram
+        </a>
+      </div>
+    </div>
+  );
 };
 
-const container = {
-  margin: "0 auto",
-  padding: "20px 0 48px",
-  width: "580px",
-};
-
-const heading = {
-  fontSize: "32px",
-  lineHeight: "1.3",
-  fontWeight: "700",
-  color: "#484848",
-};
-
-const paragraph = {
-  fontSize: "18px",
-  lineHeight: "1.4",
-  color: "#484848",
-};
+export default EmailTemplate;

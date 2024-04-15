@@ -14,6 +14,8 @@ export async function POST(req: Request) {
     const previousImageUrl = formData.get("previousImageUrl") as string | null;
     const courseId = formData.get("courseId") as string | null;
     const chapterId = formData.get("chapterId") as string | null;
+    const testimonialId = formData.get("testimonialId") as string | null;
+    const facultyId = formData.get("facultyId") as string | null;
     const isAttachment = formData.get("isAttachment") as boolean | null;
 
     const filesMap: Record<string, File[]> = {};
@@ -43,7 +45,29 @@ export async function POST(req: Request) {
         for (let file of files) {
           const fileContent = await file.arrayBuffer();
           // upload image
-          if (chapterId) {
+          if (testimonialId) {
+            const fileName = `testimonials/${testimonialId}/${file.name}`;
+            const uploadedData = await uploadFileToS3(
+              fileContent as Buffer,
+              file.type,
+              fileName
+            );
+            if (uploadedData) {
+              const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+              uploadedImageUrls.push(imageUrl);
+            }
+          } else if (facultyId) {
+            const fileName = `faculties/${facultyId}/${file.name}`;
+            const uploadedData = await uploadFileToS3(
+              fileContent as Buffer,
+              file.type,
+              fileName
+            );
+            if (uploadedData) {
+              const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
+              uploadedImageUrls.push(imageUrl);
+            }
+          } else if (chapterId) {
             const fileName = `${courseId}/chapters/${chapterId}/${file.name}`;
             const uploadedData = await uploadFileToS3(
               fileContent as Buffer,
@@ -73,7 +97,7 @@ export async function POST(req: Request) {
     }
     return NextResponse.json(uploadedImageUrls, { status: 200 });
   } catch (error) {
-    console.log("[COURSE_ID]", error);
+    console.log("[S3Upload]", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
   }
 }
