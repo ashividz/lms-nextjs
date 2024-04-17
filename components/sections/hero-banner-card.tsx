@@ -9,7 +9,14 @@ import Container from "@/components/container";
 import ratingImage from "@/public/assets/google-rating.webp";
 
 interface BannerProps {
-  banner?: any;
+  banner: {
+    id: number;
+    title: string;
+    spanTxt: string;
+    description: string;
+    btnTxt: string;
+    image: string;
+  };
   className?: string;
 }
 
@@ -43,7 +50,7 @@ export default function HeroBannerCard({ banner, className }: BannerProps) {
               {spanTxt}
             </span>
             <div className="mt-10">
-              <Link href={`${banner.btnUrl}`}>
+              <Link href="/courses">
                 <Button
                   variant="destructive"
                   size="lg"
