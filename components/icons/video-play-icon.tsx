@@ -18,8 +18,7 @@ const VideoPlayIcon = ({ isFree, videoUrl, className }: VideoPlayIconProps) => {
   const closeVideoPopup = () => {
     setShowVideoPopup(false);
   };
-  console.log("videoUrl", videoUrl);
-  console.log("isFree", isFree);
+
   return (
     <div className="relative inline-block">
       <IoMdPlayCircle

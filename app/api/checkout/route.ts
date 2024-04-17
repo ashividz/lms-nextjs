@@ -10,7 +10,6 @@ export async function POST(req: Request) {
     }
     const body = await req.json();
 
-    console.log("Request Body:", body);
     const existingBillingAddress = await db.billingAddress.findFirst({
       where: {
         userId: user.id,

@@ -2,7 +2,7 @@
 
 interface CourseFeatureItemProps {
   title: string;
-  value?: string | null;
+  value?: string | number | null;
 }
 
 const CourseFeatureItem = ({ title, value }: CourseFeatureItemProps) => {
