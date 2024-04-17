@@ -8,276 +8,265 @@ datasource db {
 }
 
 model Courses {
-  id String @id @default(uuid())
+  id    String @id @default(uuid())
   title String @db.Text
-  slug String @unique
-  
+  slug  String @unique
+
   description String? @db.Text
-  imageUrl String? @db.Text
-  price Float?
-  int_price Float?
+  imageUrl    String? @db.Text
+  price       Float?
+  int_price   Float?
 
-  duration String?
-  mode String?
-  certificate String?
-  exams String?
+  duration        String?
+  mode            String?
+  certificate     String?
+  exams           String?
   experienceLevel String?
-  studyMaterial String?
-  additionalBook String?
-  language String?
+  studyMaterial   String?
+  additionalBook  String?
+  language        String?
 
-  technologyRequirements String?
+  technologyRequirements  String?
   eligibilityRequirements String?
-  disclaimer  String?
-
+  disclaimer              String?
 
   isPublished Boolean @default(false)
 
   categoryId String?
-  category Categories? @relation(fields: [categoryId], references: [id])
+  category   Categories? @relation(fields: [categoryId], references: [id])
 
   attachements Attachements[]
-  chapters Chapters[]
-  faqs Faqs[]
-  item Item[]
-  purchases Purchase[]
-  faculties CourseFaculty[]
-  
-
+  chapters     Chapters[]
+  faqs         Faqs[]
+  item         Item[]
+  purchases    Purchase[]
+  faculties    CourseFaculty[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
-
 }
 
-model Categories{
-  id String @id @default(uuid())
-  name String @unique
+model Categories {
+  id     String    @id @default(uuid())
+  name   String    @unique
   course Courses[]
 }
 
-model Attachements{
-  id String @id @default(uuid())
+model Attachements {
+  id   String @id @default(uuid())
   name String
-  url String @db.Text
+  url  String @db.Text
 
   courseId String
-  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  @@index([courseId])
-  
-  createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-
-}
-
-model Faqs{
-  id String @id @default(uuid())
-  title String
-  description String? @db.Text
-  position Int
-  isPublished Boolean @default(false)
-
-  courseId String
-  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updateAt  DateTime @updatedAt
 
   @@index([courseId])
 }
 
-model Chapters{
-  id String @id @default(uuid())
-  title String
+model Faqs {
+  id          String  @id @default(uuid())
+  title       String
   description String? @db.Text
-  videoUrl String? @db.Text
-  position Int
+  position    Int
   isPublished Boolean @default(false)
-  isFree Boolean @default(false)
 
   courseId String
-  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  muxData MuxData[]
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
+
+  @@index([courseId])
+}
+
+model Chapters {
+  id          String  @id @default(uuid())
+  title       String
+  description String? @db.Text
+  videoUrl    String? @db.Text
+  position    Int
+  isPublished Boolean @default(false)
+  isFree      Boolean @default(false)
+
+  courseId String
+  course   Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  muxData      MuxData[]
   userProgress UserProgress[]
-  
 
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updateAt  DateTime @updatedAt
 
   @@index([courseId])
-
 }
 
-
-model MuxData{
-  id String @id @default(uuid())
-  assetId String
+model MuxData {
+  id         String  @id @default(uuid())
+  assetId    String
   playbackId String?
 
-  chapterId String @unique
-  chapters Chapters @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-
+  chapterId String   @unique
+  chapters  Chapters @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 }
 
-model UserProgress{
-  id String @id @default(uuid())
+model UserProgress {
+  id     String @id @default(uuid())
   userId String
 
   chapterId String
-  chapters Chapters @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  chapters  Chapters @relation(fields: [chapterId], references: [id], onDelete: Cascade)
 
   isCompleted Boolean @default(false)
 
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  updateAt  DateTime @updatedAt
 
+  @@unique([userId, chapterId])
   @@index([chapterId])
-
-  @@unique([userId,chapterId])
 }
 
 model Purchase {
-  id String @id @default(uuid())
+  id     String @id @default(uuid())
   userId String
 
   courseId String
-  course Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Courses @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt()
+  User      User     @relation(fields: [userId], references: [id])
 
   @@unique([userId, courseId])
   @@index([courseId])
 }
 
 model StripeCustomer {
-  id String @id @default(uuid())
-  userId String @unique
+  id               String @id @default(uuid())
+  userId           String @unique
   stripeCustomerId String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-
-enum UserRole{
+enum UserRole {
   ADMIN
   USER
 }
 
 model User {
-  id                    String    @id @default(cuid())
+  id                    String                 @id @default(cuid())
   registrationNumber    String?
   name                  String?
-  email                 String?   @unique
-  phoneNumber           String?   @unique
+  email                 String?                @unique
+  phoneNumber           String?                @unique
   qualification         String?
   profession            String?
-  bio                   String? @db.Text
+  bio                   String?                @db.Text
   emailVerified         DateTime?
   image                 String?
   password              String?
-  role                  UserRole @default(USER)
+  role                  UserRole               @default(USER)
   accounts              Account[]
   order                 Order[]
   billingAddress        BillingAddress[]
   shippingAddress       ShippingAddress[]
-  isTwoFactorEnabled    Boolean @default(false)
+  purchase              Purchase[]
+  isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
 
-  createdAt             DateTime @default(now())
-  updateAt              DateTime @updatedAt
-  
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
-model VerificationToken{
-  id String @id @default(cuid())
-  email String
-  token String @unique
+model VerificationToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
 
-
-model PasswordResetToken{
-  id String @id @default(cuid())
-  email String
-  token String @unique
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorToken {
-  id String @id @default(cuid())
-  email String
-  token String @unique
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
   expires DateTime
 
   @@unique([email, token])
 }
 
 model TwoFactorConfirmation {
-  id            String @id @default(cuid())
-  userId        String
-  user          User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId])
 }
 
-
 model Country {
-  id            Int @id @default(autoincrement())
-  name          String
-  countryCode   String
-  capital       String?
-  region        String?
-  currency      String?
-  flag          String?
-  phoneCode     String?
-  states        State[]
+  id          Int     @id @default(autoincrement())
+  name        String
+  countryCode String
+  capital     String?
+  region      String?
+  currency    String?
+  flag        String?
+  phoneCode   String?
+  states      State[]
 }
 
 model State {
-  id            Int  @id @default(autoincrement())
-  name          String
-  stateCode     String
-  country       Country   @relation(fields: [countryId], references: [id])
-  countryId     Int
-  cities        City[]
+  id        Int     @id @default(autoincrement())
+  name      String
+  stateCode String
+  country   Country @relation(fields: [countryId], references: [id])
+  countryId Int
+  cities    City[]
 }
 
 model City {
-  id            Int  @id @default(autoincrement())
-  name          String
-  state         State     @relation(fields: [stateId], references: [id])
-  stateId       Int
+  id      Int    @id @default(autoincrement())
+  name    String
+  state   State  @relation(fields: [stateId], references: [id])
+  stateId Int
 }
 
-enum PaymentStatus{
+enum PaymentStatus {
   Processing
   Paid
   Failed
@@ -286,93 +275,91 @@ enum PaymentStatus{
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String @id @default(cuid())
   name        String
   description String
   price       Float
   item        Item[]
 
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
-  id            String    @id @default(cuid())
-  orderId       String? @unique
+  id            String        @id @default(cuid())
+  orderId       String?       @unique
   subTotal      Float?
   taxTotal      Float?
   totalAmount   Float?
   currency      String?
-  user        User     @relation(fields: [userId], references: [id])
-  userId      String
-  paymentMethod   String?
-  paymentStatus   PaymentStatus @default(Processing)
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String
+  paymentMethod String?
+  paymentStatus PaymentStatus @default(Processing)
   items         Item[]
-  sameAsBilling Boolean @default(true)  
-  
+  sameAsBilling Boolean       @default(true)
+
   createdAt DateTime @default(now())
-  updateAt DateTime @updatedAt
-
+  updateAt  DateTime @updatedAt
 }
+
 model Item {
-  id          String   @id @default(cuid())
-  orderId     String?
-  order       Order? @relation(fields: [orderId], references: [id])
+  id      String  @id @default(cuid())
+  orderId String?
+  order   Order?  @relation(fields: [orderId], references: [id])
 
-
-  itemName    String
-  quantity    Int @default(1)
-  price       Float?
-  int_price   Float?
-  type        String?   
-  courseId    String?
-  productId   String?
-  course      Courses? @relation(fields: [courseId], references: [id])
-  product     Product? @relation(fields: [productId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  itemName  String
+  quantity  Int      @default(1)
+  price     Float?
+  int_price Float?
+  type      String?
+  courseId  String?
+  productId String?
+  course    Courses? @relation(fields: [courseId], references: [id])
+  product   Product? @relation(fields: [productId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model BillingAddress {
-  id         String @id @default(cuid())
-  userId     String
-  user       User @relation(fields: [userId], references: [id])
-  country    String
-  state      String
-  city       String
-  address    String @db.Text
-  zip        String
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  country String
+  state   String
+  city    String
+  address String @db.Text
+  zip     String
 }
 
 model ShippingAddress {
-  id         String @id @default(cuid())
-  userId     String
-  user       User @relation(fields: [userId], references: [id])
-  country    String
-  state      String
-  city       String
-  address    String @db.Text
-  zip        String
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+  country String
+  state   String
+  city    String
+  address String @db.Text
+  zip     String
 }
 
-model Career{
-  id                String      @id @default(cuid())
-  name              String
-  email             String
-  phoneNumber       String?
-  qualification     String?
-  country           String?
-  state             String?
-  city              String?
-  zip               String?
-  bio               String?
-  positionApplied   String?
-  resume            String?
+model Career {
+  id              String  @id @default(cuid())
+  name            String
+  email           String
+  phoneNumber     String?
+  qualification   String?
+  country         String?
+  state           String?
+  city            String?
+  zip             String?
+  bio             String?
+  positionApplied String?
+  resume          String?
 }
 
-model Testimonials{
-  id          String @id @default(cuid())
+model Testimonials {
+  id          String  @id @default(cuid())
   studentName String
   title       String?
   description String?
@@ -381,30 +368,28 @@ model Testimonials{
   videoUrl    String?
   isPublished Boolean @default(false)
 
-  createdAt   DateTime @default(now())
-  updateAt    DateTime @updatedAt
-
+  createdAt DateTime @default(now())
+  updateAt  DateTime @updatedAt
 }
 
-model Faculty{
-  id String @id @default(cuid())
-  name String
-  shortDescription   String?
-  description String? @db.Text
-  imageUrl    String?
-  isPublished Boolean @default(false)
+model Faculty {
+  id               String  @id @default(cuid())
+  name             String
+  shortDescription String?
+  description      String? @db.Text
+  imageUrl         String?
+  isPublished      Boolean @default(false)
 
-  courses  CourseFaculty[]
+  courses CourseFaculty[]
 
-  
-  createdAt   DateTime @default(now())
+  createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model CourseFaculty {
-  id       String   @id @default(cuid())
-  courseId String
+  id        String  @id @default(cuid())
+  courseId  String
   facultyId String
-  course   Courses  @relation(fields: [courseId], references: [id])
-  faculty  Faculty  @relation(fields: [facultyId], references: [id])
+  course    Courses @relation(fields: [courseId], references: [id])
+  faculty   Faculty @relation(fields: [facultyId], references: [id])
 }

@@ -1,29 +1,12 @@
 "use client";
-import { useState, useEffect } from "react";
-import axios from "axios";
+
 import Container from "@/components/container";
 import BannerCard from "./_components/banner-card";
 import StickySidebar from "./_components/sticky-sidebar";
-import { userType } from "@/types/user-type";
+
 import { UserProvider } from "@/context/user-context";
 
 const UserLayout = ({ children }: { children: React.ReactNode }) => {
-  // const [userData, setUserData] = useState<userType | null>(null);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const response = await axios.get("/api/user");
-
-  //       setUserData(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching user data:", error);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, []);
-
   return (
     <>
       <UserProvider>

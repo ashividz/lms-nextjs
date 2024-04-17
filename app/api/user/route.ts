@@ -13,6 +13,13 @@ export async function GET(req: Request) {
       where: {
         email: userEmail!,
       },
+      include: {
+        purchase: {
+          include: {
+            course: true,
+          },
+        },
+      },
     });
     return NextResponse.json(userDetails, { status: 200 });
   } catch (error) {

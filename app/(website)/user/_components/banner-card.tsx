@@ -22,7 +22,7 @@ const BannerCard = ({ className }: BannerCardProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const { userData } = useUser();
-
+  console.log("Userdata on Banner card:", userData);
   return (
     <div className={cn("w-full sticky top-[70px] z-10", className)}>
       <Container>
@@ -89,13 +89,17 @@ const BannerCard = ({ className }: BannerCardProps) => {
                 {userData?.email ? (
                   <p className="text-sky-100 mb-2">{userData?.email}</p>
                 ) : (
-                  <Skeleton className="h-5 w-[280px] rounded-xl" />
+                  <Skeleton className="h-5 w-[280px] rounded-xl mb-2" />
+                )}
+                {userData?.purchase ? (
+                  <p className="text-sky-100 mr-4">
+                    <FaBookBookmark className="inline w-4 h-4 mr-2" />
+                    {userData?.purchase?.length} Courses Enrolled
+                  </p>
+                ) : (
+                  <Skeleton className="h-5 w-[240px] rounded-xl" />
                 )}
 
-                <p className="text-sky-100 mr-4">
-                  <FaBookBookmark className="inline w-4 h-4 mr-2" />5 Courses
-                  Enrolled
-                </p>
                 <p className="text-sky-100 mr-4 mt-2 lg:mt-0">
                   <PiCertificate className="inline w-4 h-4 mr-2" />4
                   Certificates
