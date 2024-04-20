@@ -9,20 +9,16 @@ import {
 } from "@/components/ui/carousel";
 import CourseCard from "@/components/courses/course-card";
 import CourseContainer from "@/components/courses/course-container";
+import { Categories, Courses } from "@prisma/client";
 
-interface RelatedCourse {
-  relatedCourses: {
-    id: string;
-    title: string;
-    description: string | null;
-    imageUrl: string | null;
-    price: number | null;
-    slug: string;
-  };
-}
+type CourseWithProgressWithCategory = Courses & {
+  category: Categories | null;
+  chapters: { id: string }[];
+  progress: number | null;
+};
 
 interface RelatedCourseProps {
-  relatedCourses: RelatedCourse["relatedCourses"][];
+  relatedCourses: CourseWithProgressWithCategory[];
 }
 
 const RelatedCourseSlider = ({ relatedCourses }: RelatedCourseProps) => {

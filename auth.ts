@@ -17,7 +17,7 @@ export const {
   signOut,
 } = NextAuth({
   pages: {
-    signIn: "/auth/login",
+    signIn: "/signin",
     error: "/auth/error",
   },
   events: {
@@ -66,8 +66,17 @@ export const {
       }
 
       if (session.user) {
+        session.user.id = token.id as string;
         session.user.name = token.name;
         session.user.email = token.email as string;
+        session.user.phoneNumber = token.phoneNumber as string;
+        session.user.registrationNumber = token.registrationNumber as string;
+        session.user.qualification = token.qualification as string;
+        session.user.profession = token.profession as string;
+        session.user.bio = token.bio as string;
+        session.user.createdAt = token.createdAt as Date;
+        session.user.updateAt = token.updateAt as Date;
+        session.user.bio = token.bio as string;
         session.user.isOAuth = token.isOAuth as boolean;
       }
 
@@ -83,9 +92,19 @@ export const {
       const existingAccount = await getAccountByUserId(existingUser.id);
 
       token.isOAuth = !!existingAccount;
+      token.id = existingUser.id;
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
+      token.phoneNumber = existingUser.phoneNumber;
+      token.registrationNumber = existingUser.registrationNumber;
+      token.qualification = existingUser.qualification;
+      token.profession = existingUser.profession;
+      token.bio = existingUser.bio;
+      token.createdAt = existingUser.createdAt;
+      token.updateAt = existingUser.updateAt;
+      token.bio = existingUser.bio;
+
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 
       return token;

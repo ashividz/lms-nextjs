@@ -7,8 +7,6 @@ import RelatedCourseSlider from "@/components/courses/related-course-slider";
 import StickySidebar from "@/components/courses/sticky-sidebar";
 import { currentUser } from "@/lib/auth";
 
-import { db } from "@/lib/db";
-
 const SingleCoursePage = async ({
   params,
 }: {

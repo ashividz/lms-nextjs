@@ -141,9 +141,21 @@ const CourseDetails = ({ course }: CourseDetailsProps) => {
                 Course Details
               </h2>
               <CourseDetailsContent
-                technologyRequirement="Laptop and high speed internet."
-                eligibility="Anybody with a zeal for healthy nutrition."
-                disclaimer="Not for clinical practice."
+                technologyRequirement={
+                  course.technologyRequirements
+                    ? course.technologyRequirements
+                    : "Laptop and high speed internet."
+                }
+                eligibility={
+                  course.eligibilityRequirements
+                    ? course.eligibilityRequirements
+                    : "Anybody with a zeal for healthy nutrition."
+                }
+                disclaimer={
+                  course.disclaimer
+                    ? course.disclaimer
+                    : "Not for clinical practice."
+                }
               />
             </>
           )}

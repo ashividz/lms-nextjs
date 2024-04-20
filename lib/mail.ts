@@ -51,3 +51,11 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     html: `<p>Click <a href="${confirmLink}">here</a> to confirm email.</p>`,
   });
 };
+
+export const sendCareerEmailToAdmin = async (email: string, name: string) => {
+  await sendEmail({
+    to: email,
+    subject: `New career request from ${name}`,
+    html: `<p>Hi ${name},</p><p>A new career request has been created.</p>`,
+  });
+};

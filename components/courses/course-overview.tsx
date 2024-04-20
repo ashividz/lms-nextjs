@@ -1,32 +1,54 @@
 "use client";
 
 import CourseFeatureItem from "@/components/courses/course-feature-item";
+import { Courses } from "@prisma/client";
 
 interface CourseOverviewProps {
-  course: {
-    description: string | null;
-  };
+  course: Courses;
 }
 
 const CourseOverview = ({ course }: CourseOverviewProps) => {
   return (
     <div className="w-full items-start justify-start">
-      <p className="text-lg text-gray-600">{course.description}</p>
+      <p className="text-lg text-gray-600">{course.description || "N/A"}</p>
 
-      <CourseFeatureItem title="Duration" value="3 Months" />
-      <CourseFeatureItem title="Mode" value="100% Online Courses" />
-      <CourseFeatureItem title="Certificate" value="Yes" />
-      <CourseFeatureItem title="Exams" value="Yes" />
+      <CourseFeatureItem title="Duration" value={course.duration || "N/A"} />
+      <CourseFeatureItem
+        title="Mode"
+        value={
+          course.mode || "Live interactive classes at the comfort of your home"
+        }
+      />
+      <CourseFeatureItem
+        title="Certificate"
+        value={
+          course.certificate ||
+          "Yes, Unitus academy will reward a course completion certificate"
+        }
+      />
+      <CourseFeatureItem
+        title="Exams"
+        value={
+          course.exams ||
+          "Exam to be conducted after the completion of the course"
+        }
+      />
       <CourseFeatureItem
         title="Experience Level"
-        value="No experience required"
+        value={course.experienceLevel || "No prior experience required"}
       />
       <CourseFeatureItem
         title="Study material"
-        value="Included in the course"
+        value={course.studyMaterial || "Included in the course"}
       />
-      <CourseFeatureItem title="Additional Book" value="Everyday Ayurveda" />
-      <CourseFeatureItem title="Language" value="English - Hindi" />
+      <CourseFeatureItem
+        title="Additional Book"
+        value={course.additionalBook || "N/A"}
+      />
+      <CourseFeatureItem
+        title="Language"
+        value={course.language || "English - Hindi"}
+      />
     </div>
   );
 };

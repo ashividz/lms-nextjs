@@ -9,13 +9,18 @@ import Container from "@/components/container";
 import ratingImage from "@/public/assets/google-rating.webp";
 
 interface BannerProps {
-  banner?: any;
+  banner: {
+    id: number;
+    title: string;
+    spanTxt: string;
+    description: string;
+    btnTxt: string;
+    image: string;
+  };
   className?: string;
 }
 
 export default function HeroBannerCard({ banner, className }: BannerProps) {
-  const { title, description, spanTxt, image } = banner;
-
   return (
     <div
       className={cn(
@@ -35,15 +40,17 @@ export default function HeroBannerCard({ banner, className }: BannerProps) {
             />
 
             <h2 className="text-2xl lg:text-3xl xl:text-5xl mb-6 font-semibold transition-all duration-1000 ease-in-out transform animate-slide-in">
-              {title}
+              {banner.title}
             </h2>
 
-            <p className="text-sm mb-6 animate-slide-up">{description}</p>
+            <p className="text-sm mb-6 animate-slide-up">
+              {banner.description}
+            </p>
             <span className="text-sm sm:text-sm md:text-xl bg-white p-2 rounded-full text-webprimary">
-              {spanTxt}
+              {banner.spanTxt}
             </span>
             <div className="mt-10">
-              <Link href={`${banner.btnUrl}`}>
+              <Link href="/courses">
                 <Button
                   variant="destructive"
                   size="lg"
@@ -56,8 +63,8 @@ export default function HeroBannerCard({ banner, className }: BannerProps) {
           </div>
           <div className="order-2 lg:order-1 mt-8 lg:mt-0 lg:ml-auto">
             <Image
-              src={image}
-              alt={title}
+              src={banner.image}
+              alt={banner.title}
               width={500}
               height={500}
               className="self-end"

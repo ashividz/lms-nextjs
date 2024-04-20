@@ -14,6 +14,7 @@ interface CartContextType {
   addToCart: (item: CartItem) => void;
   updateQuantityInCart: (id: string, newQuantity: number) => void;
   removeFromCart: (id: string) => void;
+  emptyCart: () => void;
 }
 
 const CartContext = createContext<CartContextType>({
@@ -21,6 +22,7 @@ const CartContext = createContext<CartContextType>({
   addToCart: () => {},
   updateQuantityInCart: () => {},
   removeFromCart: () => {},
+  emptyCart: () => {},
 });
 
 export const useCart = () => useContext(CartContext);
@@ -82,6 +84,11 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
     localStorage.setItem("cartItems", JSON.stringify(updatedCartItems));
   };
 
+  const emptyCart = () => {
+    setCartItems([]); // Clear the cart items from state
+    localStorage.removeItem("cartItems"); // Remove cart items from localStorage
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -89,6 +96,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({
         addToCart,
         updateQuantityInCart,
         removeFromCart,
+        emptyCart,
       }}
     >
       {children}

@@ -29,12 +29,6 @@ interface StickySidebarProps {
   className?: string;
 }
 
-// interface StickySidebarProps {
-//   course: CartItem;
-//   videoUrl: string;
-//   isFree: boolean;
-// }
-
 const StickySidebar = ({ course, cartItems }: StickySidebarProps) => {
   const [itemPrice, setItemPrice] = useState<number>(course.price!);
   const { userCurrency, userCountry } = useUserCountry();
@@ -108,14 +102,29 @@ const StickySidebar = ({ course, cartItems }: StickySidebarProps) => {
           <MdOutlineRotateLeft className="w-4 h-4 mr-1" />
           15 days money back guarantee
         </p>
-        <CourseFeatureItem title="Duration" value="3 Months" />
-        <CourseFeatureItem title="Certificate" value="Yes" />
-        <CourseFeatureItem title="Exams" value="Yes" />
+        <CourseFeatureItem title="Duration" value={course.duration || "N/A"} />
+        <CourseFeatureItem
+          title="Certificate"
+          value={
+            course.certificate ||
+            "Yes, Unitus academy will reward a course completion certificate"
+          }
+        />
+        <CourseFeatureItem
+          title="Exams"
+          value={
+            course.exams ||
+            "Exam to be conducted after the completion of the course"
+          }
+        />
         <CourseFeatureItem
           title="Experience Level"
-          value="No experience required"
+          value={course.experienceLevel || "No prior experience required"}
         />
-        <CourseFeatureItem title="Language" value="English - Hindi" />
+        <CourseFeatureItem
+          title="Language"
+          value={course.language || "English - Hindi"}
+        />
       </div>
     </div>
   );

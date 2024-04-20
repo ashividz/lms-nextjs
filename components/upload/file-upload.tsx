@@ -11,6 +11,8 @@ import UploadButton from "@/components/upload/upload-button";
 interface FileUploadProps {
   previousImageUrl?: string | null;
   courseId?: string | null;
+  testimonialId?: string | null;
+  facultyId?: string | null;
   chapterId?: string | null;
   isAttachment?: boolean;
   acceptedFileTypes: string[];
@@ -22,6 +24,8 @@ const FileUpload = ({
   previousImageUrl,
   courseId,
   chapterId,
+  testimonialId,
+  facultyId,
   isAttachment,
   acceptedFileTypes,
   multiple,
@@ -58,6 +62,8 @@ const FileUpload = ({
       formData.append("previousImageUrl", previousImageUrl || "");
       formData.append("courseId", courseId || "");
       formData.append("chapterId", chapterId || "");
+      formData.append("testimonialId", testimonialId || "");
+      formData.append("facultyId", facultyId || "");
       if (isAttachment) {
         formData.append("isAttachment", "true");
       }

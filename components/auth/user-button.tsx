@@ -2,6 +2,16 @@
 
 import { FaUser } from "react-icons/fa";
 import { ExitIcon } from "@radix-ui/react-icons";
+import { useEffect } from "react";
+import { getSession } from "next-auth/react";
+import {
+  BookOpenText,
+  CircleUserRound,
+  Home,
+  Settings,
+  ShoppingBag,
+  UserRound,
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -13,27 +23,81 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { LogoutButton } from "@/components/auth/logout-button";
 
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { LoginButton } from "@/components/auth/login-button";
+
 export const UserButton = () => {
+  useEffect(() => {
+    const getSessionData = async () => {
+      await getSession();
+    };
+
+    getSessionData();
+  }, []);
   const user = useCurrentUser();
+  const pathname = usePathname();
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage src={user?.image || ""} />
-          <AvatarFallback className="bg-sky-500">
-            <FaUser className="text-white" />
-          </AvatarFallback>
-        </Avatar>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-40" align="end">
-        <LogoutButton>
-          <DropdownMenuItem className="cursor-pointer">
-            <ExitIcon className="h-4 w-4 mr-2" />
-            Logout
-          </DropdownMenuItem>
-        </LogoutButton>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      {!user ? (
+        <LoginButton>
+          <div className="p-2 border-[1px] border-slate-300 rounded-full cursor-pointer">
+            <CircleUserRound className="h-6 w-6 text-gray-500" />
+          </div>
+        </LoginButton>
+      ) : (
+        <div className="account-button">
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <Avatar className="cursor-pointer border-2 border-sky-500">
+                <AvatarImage src={user?.image || ""} className="w-10 h-10" />
+                <AvatarFallback className="bg-sky-500">
+                  <FaUser className="text-white" />
+                </AvatarFallback>
+              </Avatar>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent className="w-48" align="end">
+              <Link href="/user/dashboard">
+                <DropdownMenuItem className="cursor-pointer">
+                  <Home className="h-4 w-4 mr-2" />
+                  Dashboard
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/user/profile">
+                <DropdownMenuItem className="cursor-pointer">
+                  <UserRound className="h-4 w-4 mr-2" />
+                  My Profile
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/user/enrolled-courses">
+                <DropdownMenuItem className="cursor-pointer">
+                  <BookOpenText className="h-4 w-4 mr-2" />
+                  Enrolled Courses
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/user/orders">
+                <DropdownMenuItem className="cursor-pointer">
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                  My Orders
+                </DropdownMenuItem>
+              </Link>
+              <Link href="/user/settings">
+                <DropdownMenuItem className="cursor-pointer">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Settings
+                </DropdownMenuItem>
+              </Link>
+              <DropdownMenuItem className="cursor-pointer">
+                <ExitIcon className="h-4 w-4 mr-2" />
+
+                <LogoutButton callbackUrl={pathname}>Logout</LogoutButton>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+    </>
   );
 };

@@ -21,6 +21,7 @@ export const NavbarRoutes = () => {
           <SearchInput />
         </div>
       )}
+
       <div className="flex gap-x-2 ml-auto">
         <Link href="/">
           <Button size="sm" variant="ghost">

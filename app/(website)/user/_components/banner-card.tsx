@@ -1,67 +1,132 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { useState } from "react";
+import Image from "next/image";
+import { CameraIcon, Loader2 } from "lucide-react";
 import { FaBookBookmark } from "react-icons/fa6";
 import { PiCertificate } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
 import Container from "@/components/container";
-import { url } from "inspector";
-import Image from "next/image";
-import { User } from "@prisma/client";
+import { cn } from "@/lib/utils";
+
+import { Skeleton } from "@/components/ui/skeleton";
+
+import UploadProfilePic from "./upload-profile-pic";
+import { formatDate } from "@/lib/formatDate";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface BannerCardProps {
-  user: {
-    name: string;
-    email: string;
-    image?: string;
-  };
   className?: string;
 }
-const BannerCard = ({ className, user }: BannerCardProps) => {
+
+const BannerCard = ({ className }: BannerCardProps) => {
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const user = useCurrentUser();
   return (
-    <div className={cn("w-full ", className)}>
+    <div className={cn("w-full sticky top-[70px] z-10", className)}>
       <Container>
-        <div
-          className="flex justify-start items-center flex-col lg:flex-row rounded-md p-12"
-          style={{
-            backgroundImage: 'url("/assets/student-cover-background.webp")',
-            backgroundSize: "cover",
-          }}
-        >
-          {/* User profile picture */}
-          <div className="mr-4">
-            <div className="mb-4 lg:mb-0 text-center lg:text-left ">
-              <Image
-                src={user.image ? user.image : "/assets/default-student.jpg"}
-                alt="Default Student"
-                width={180}
-                height={100}
-                className="rounded-full border-4 border-sky-100"
-              />
+        <div className="flex flex-col lg:flex-row justify-between rounded-md bg-gradient-to-r from-fuchsia-500 to-cyan-500">
+          <div className="m-8 flex flex-col lg:flex-row items-center justify-start">
+            <div className="mr-4 relative">
+              <div className="mb-4 lg:mb-0 text-center lg:text-left ">
+                {user ? (
+                  imagePreview ? (
+                    <div className="relative">
+                      <Image
+                        src={imagePreview}
+                        alt="User Image"
+                        width={180}
+                        height={180}
+                        priority
+                        className="rounded-full border-4 border-sky-100"
+                        style={{
+                          filter: isUploading ? "blur(4px)" : "none",
+                          opacity: isUploading ? "0.5" : "1",
+                        }}
+                      />
+
+                      {isUploading && (
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Loader2 className="w-6 h-6 animate-spin" />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Image
+                      src={
+                        user?.image
+                          ? user?.image
+                          : "/assets/default-student.jpg"
+                      }
+                      alt="Default Student"
+                      width={180}
+                      height={180}
+                      priority
+                      className="relative rounded-full border-4 border-sky-100"
+                    />
+                  )
+                ) : (
+                  <Skeleton className="w-44 h-44 rounded-full" />
+                )}
+
+                <UploadProfilePic
+                  setImagePreview={setImagePreview}
+                  setIsUploading={setIsUploading}
+                />
+              </div>
             </div>
-          </div>
-          {/* User name and email */}
-          <div>
-            <h1 className="text-3xl font-bold text-sky-100 mb-2">
-              {user.name}
-            </h1>
-            <p className="text-sky-100 mb-2">{user.email}</p>
-            <div className="flex items-center mb-2">
-              <p className="text-sky-100">
-                <FaBookBookmark className="inline w-4 h-4 mr-2" />5 Course
-                Enrolled
-              </p>
-              <div className="ml-auto md:ml-4">
-                <p className="text-sky-100">
+
+            <div className="flex flex-col items-center lg:items-start">
+              <div className="ml-0 lg:ml-4">
+                {user?.name ? (
+                  <h1 className="text-3xl font-bold text-sky-100 mb-2">
+                    {user?.name}
+                  </h1>
+                ) : (
+                  <Skeleton className="h-8 w-[300px] rounded-xl mb-2" />
+                )}
+                {user?.email ? (
+                  <p className="text-sky-100 mb-2">{user?.email}</p>
+                ) : (
+                  <Skeleton className="h-5 w-[280px] rounded-xl mb-2" />
+                )}
+                {/* {user?.purchase ? (
+                  <p className="text-sky-100 mr-4">
+                    <FaBookBookmark className="inline w-4 h-4 mr-2" />
+                    {user?.purchase?.length} Courses Enrolled
+                  </p>
+                ) : (
+                  <Skeleton className="h-5 w-[240px] rounded-xl" />
+                )} */}
+
+                <p className="text-sky-100 mr-4 mt-2 lg:mt-0">
                   <PiCertificate className="inline w-4 h-4 mr-2" />4
                   Certificates
                 </p>
+
+                {user?.createdAt ? (
+                  <p className="text-sky-100 mt-2 lg:mt-0 text-muted-foreground">
+                    <SlCalender className="inline w-3 h-3 mr-2" />
+                    <span className="mr-2">Registered on</span>
+                    {formatDate(user?.createdAt)}
+                  </p>
+                ) : (
+                  <Skeleton className="h-5 w-[250px] rounded-xl" />
+                )}
               </div>
+              <div className="ml-0 lg:ml-4 mt-4 lg:mt-0"></div>
             </div>
-            <p className="text-sky-100 text-muted-foreground">
-              <SlCalender className="inline w-3 h-3 mr-2" />
-              Registered on Jan 18 2024
-            </p>
+          </div>
+          <div className="m-0 lg:ml-10 mt-8 lg:mt-0 hidden lg:block items-end justify-end text-end">
+            <Image
+              src="/assets/student.png"
+              alt="Banner Card"
+              width={300}
+              height={300}
+              priority
+              className="mr-10"
+            />
           </div>
         </div>
       </Container>

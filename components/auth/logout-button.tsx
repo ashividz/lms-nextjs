@@ -1,23 +1,25 @@
 "use client";
 
-import { logout } from "@/actions/logout";
 import { useRouter } from "next/navigation";
+
+import { logout } from "@/actions/logout";
 
 interface LogoutButtonProps {
   children?: React.ReactNode;
+  callbackUrl?: string;
 }
 
-export const LogoutButton = ({ children }: LogoutButtonProps) => {
+export const LogoutButton = ({ children, callbackUrl }: LogoutButtonProps) => {
   const router = useRouter();
   const onClick = async () => {
-    await logout().then(() => {
-      router.push("/auth/login");
-    });
+    await logout();
+    const encodedCallbackUrl = encodeURIComponent(callbackUrl || "");
+    router.push("/auth/login?callbackUrl=" + encodedCallbackUrl);
   };
 
   return (
-    <span onClick={onClick} className="cursor-pointer">
+    <div onClick={onClick} className="w-full cursor-pointer">
       {children}
-    </span>
+    </div>
   );
 };

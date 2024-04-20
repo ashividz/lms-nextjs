@@ -28,16 +28,17 @@ export const Social = () => {
           className="w-full"
           onClick={() => onClick("google")}
         >
-          <FcGoogle className="w-5 h-5" />
+          <FcGoogle className="w-5 h-5 mr-2" />
+          <span className="font-bold">Login with Google</span>
         </Button>
-        <Button
+        {/* <Button
           variant="outline"
           size="lg"
           className="w-full"
           onClick={() => onClick("github")}
         >
           <FaGithub className="w-5 h-5" />
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

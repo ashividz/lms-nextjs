@@ -11,9 +11,13 @@ import { MobileMenuItems } from "@/components/header/mobile-menu-items";
 import { LoginForm } from "@/components/auth/login-form";
 import { useCart } from "@/context/cart-context";
 import CartDetails from "@/components/header/cart-details";
+import { LoginButton } from "../auth/login-button";
+
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const MobileMenu = () => {
   const { cartItems } = useCart();
+  const user = useCurrentUser();
   const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   return (
     <div className="fixed md:hidden z-50 bottom-0 left-0 right-0 bg-white border-t border-gray-200 px-4 py-2">
@@ -70,15 +74,21 @@ const MobileMenu = () => {
           </Sheet>
         </div>
         <div>
-          <Sheet>
-            <SheetTrigger className="flex flex-col items-center justify-center">
-              <RiAccountCircleLine size={24} className="mb-1" />
-              <span className="text-xs">My Account</span>
-            </SheetTrigger>
-            <SheetContent side="right">
-              <LoginForm />
-            </SheetContent>
-          </Sheet>
+          {user ? (
+            <Link href="/user/dashboard">
+              <div className="flex flex-col items-center justify-center">
+                <RiAccountCircleLine size={24} className="mb-1" />
+                <span className="text-xs">My Account</span>
+              </div>
+            </Link>
+          ) : (
+            <LoginButton>
+              <div className="flex flex-col items-center justify-center">
+                <RiAccountCircleLine size={24} className="mb-1" />
+                <span className="text-xs">My Account</span>
+              </div>
+            </LoginButton>
+          )}
         </div>
       </div>
     </div>

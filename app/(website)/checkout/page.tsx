@@ -2,8 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import { CircleDashed } from "lucide-react";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FormProvider, useForm } from "react-hook-form";
+import axios from "axios";
+import { toast } from "react-toastify";
+
 import CheckoutForm from "@/components/checkout/checkout-form";
 import Container from "@/components/container";
 import PageTitle from "@/components/sections/page-title";
@@ -12,13 +18,14 @@ import { useCart } from "@/context/cart-context";
 import { exchangePrice } from "@/lib/exchangePrice";
 import { useUserCountry } from "@/context/user-country-context";
 import { Form } from "@/components/ui/form";
-import { FormProvider, useForm } from "react-hook-form";
 import { billingSchema, checkoutSchema } from "@/schemas";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { useRouter } from "next/navigation";
-import Razorpay from "razorpay";
+
+declare global {
+  interface Window {
+    Razorpay: any; // or specify the correct type for Razorpay
+  }
+}
 const CheckoutPage = () => {
   const [selectedMethod, setSelectedMethod] = useState<string | null>("PayU");
   const [sameAsBilling, setSameAsBilling] = useState(true);
@@ -35,7 +42,7 @@ const CheckoutPage = () => {
     setSelectedMethod(method);
   };
 
-  const { cartItems } = useCart();
+  const { cartItems, emptyCart } = useCart();
   const { userCurrency, userCountry } = useUserCountry();
   const totalAmount =
     userCountry !== "IN"
@@ -150,45 +157,83 @@ const CheckoutPage = () => {
         currency: userCurrency,
       };
 
-      // const response = await axios.post("/api/checkout", formDataWithCourses);
-      //router.push(`/admin/courses/${response.data.id}`);
+      const checkoutResponse = await axios.post(
+        "/api/checkout",
+        formDataWithCourses
+      );
+      const checkoutData = checkoutResponse.data;
+      if (!checkoutData) throw new Error("Checkout failed");
+      if (checkoutData.paymentMethod === "Razorpay") {
+        const res = await initializeRazorpay();
 
-      const res = await initializeRazorpay();
-      if (!res) {
-        alert("Razorpay SDK Failed to load");
-        return;
+        if (!res) {
+          throw new Error("Razorpay SDK Failed to load");
+        }
+        const razorpayData = {
+          amount: checkoutData.totalAmount,
+          currency: checkoutData.currency,
+          orderId: checkoutData.id,
+        };
+
+        const response = await axios.post("/api/razorpay", razorpayData);
+        const data = response.data;
+
+        var options = {
+          key: process.env.RAZORPAY_KEY,
+          name: "Unitus Health Academy",
+          currency: data.currency,
+          amount: data.amount,
+          order_id: data.id,
+          description: "Thankyou for your intress in Unitus Health Academy",
+          image: "./unitus-logo.png",
+          handler: function (response: any) {
+            if (response.razorpay_payment_id === null) {
+              toast.error("Payment Cancelled", {
+                position: "top-center",
+                autoClose: 5000,
+              });
+            } else if (
+              response.error &&
+              response.error.code === "payment_failed"
+            ) {
+              // Payment failed
+              toast.error("Payment failed", {
+                position: "top-center",
+                autoClose: 5000,
+              });
+            } else if (response.razorpay_payment_id) {
+              // Payment success, redirect to success page
+              emptyCart();
+              router.push("/success?orderId=" + response.razorpay_order_id);
+            } else {
+              toast.error("Payment cancelled", {
+                position: "top-center",
+                autoClose: 5000,
+              });
+            }
+          },
+          modal: {
+            ondismiss: function () {
+              toast.error("Payment Cancelled", {
+                position: "top-center",
+                autoClose: 5000,
+              });
+            },
+          },
+          prefill: {
+            name: values.billing_firstName + " " + values.billing_lastName,
+            email: values.billing_email,
+            contact: values.billing_phoneNumber,
+          },
+        };
+        const paymentObject = new window.Razorpay(options);
+        paymentObject.open();
       }
-
-      // const response = await axios.post("/api/razorpay", formDataWithCourses);
-      // console.log("Response from Razorpay:", response.data);
-
-      // // Extract the order ID from the response
-      // const orderId = response.data.orderId;
-      // setOrderId(orderId);
-      // if (orderId) {
-      //   // Redirect user to Razorpay payment page
-      //   router.push(`https://checkout.razorpay.com/v1/checkout.js`);
-      // } else {
-      //   console.error("Failed to get order ID");
-      // }
-      toast.success("Your order created successfully", {
-        position: "top-center",
-        autoClose: 5000,
-      });
     } catch {
       toast.error("Something went wrong while creating order", {
         position: "top-center",
         autoClose: 5000,
       });
-    }
-    if (selectedMethod === "PayU") {
-      // Call PayU API to process payment
-      console.log("Processing payment via PayU...");
-    } else if (selectedMethod === "Razorpay") {
-      // Call RazorPay API to process payment
-      console.log("Processing payment via RazorPay...");
-    } else {
-      console.error("No payment method selected!");
     }
   };
 
@@ -196,7 +241,6 @@ const CheckoutPage = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      // document.body.appendChild(script);
 
       script.onload = () => {
         resolve(true);
@@ -233,7 +277,16 @@ const CheckoutPage = () => {
                 >
                   <span className="relative flex items-center">
                     <span className="transition-transform">
-                      Proceed to payment
+                      {isSubmitting ? (
+                        <>
+                          <div className="flex items-center">
+                            <CircleDashed className="w-5 h-5 mr-2 animate-spin" />
+                            <span>Processing...</span>
+                          </div>
+                        </>
+                      ) : (
+                        "Proceed to Payment"
+                      )}
                     </span>
                     <FaArrowRight className="ml-2 opacity-100 group-hover:opacity-0 duration-300 transition-transform" />
                   </span>

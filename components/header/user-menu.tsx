@@ -6,22 +6,7 @@ const Usermenu = () => {
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
-        <div
-          className="
-          p-1
-          border-[1px] 
-          border-neutral-200 
-          flex 
-          flex-row 
-          items-center 
-          max-w-xs
-          gap-3 
-          rounded-full 
-          cursor-pointer 
-          hover:shadow-md 
-          transition
-          "
-        >
+        <div className="flex flex-row items-center rounded-full cursor-pointer transition">
           <UserButton />
         </div>
       </div>

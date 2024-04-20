@@ -36,6 +36,9 @@ const CourseFaqs = ({ faqs }: CourseFaqsProps) => {
 
   return (
     <div className="w-full">
+      {faqs.length < 1 && (
+        <p className="text-lg font-bold text-center">No FAQs available</p>
+      )}
       <Accordion
         type="single"
         defaultValue={firstFaqId || ""}
