@@ -3,7 +3,7 @@
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 
@@ -23,12 +23,19 @@ import { FormSuccess } from "@/components/form-success";
 import { LoginSchema } from "@/schemas";
 import { login } from "@/actions/login";
 import { SubmitButton } from "@/components/submit-button";
-import { getSession } from "next-auth/react";
+import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 
-export const LoginForm = () => {
+interface LoginFormProps {
+  callBackUrl?: string;
+  mode?: "modal" | "redirect";
+}
+
+export const LoginForm = ({ callBackUrl, mode }: LoginFormProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl");
+  const callbackUrl = callBackUrl
+    ? callBackUrl
+    : searchParams.get("callbackUrl");
   const urlError =
     searchParams.get("error") === "OAuthAccountNotLinked"
       ? "Email already in use with different provider!"
@@ -56,23 +63,15 @@ export const LoginForm = () => {
       login(values, callbackUrl)
         .then((data) => {
           if (data?.error) {
-            form.reset();
             setError(data.error);
           }
 
           if (data?.success) {
             form.reset();
             setSuccess(data.success);
-            const interval = setInterval(async () => {
-              const session = await getSession();
-
-              if (session) {
-                clearInterval(interval);
-                setIsLoading(false);
-                localStorage.setItem("toastDisplayed", "false");
-                router.replace(callbackUrl || "/admin/dashboard");
-              }
-            }, 500);
+            setIsLoading(false);
+            localStorage.setItem("toastDisplayed", "false");
+            router.push(callbackUrl || DEFAULT_LOGIN_REDIRECT);
           }
 
           if (data?.twoFactor) {
@@ -164,7 +163,7 @@ export const LoginForm = () => {
           <FormError message={error || urlError} />
           <FormSuccess message={isloading ? "" : success} />
           <SubmitButton
-            isPending={isPending || isloading}
+            isPending={isPending}
             submitText={showTwoFactor ? "Confirm" : "Login"}
           />
         </form>

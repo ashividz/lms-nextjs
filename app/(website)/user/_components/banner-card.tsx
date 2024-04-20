@@ -8,11 +8,12 @@ import { PiCertificate } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
 import Container from "@/components/container";
 import { cn } from "@/lib/utils";
-import { userType } from "@/types/user-type";
+
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUser } from "@/context/user-context";
+
 import UploadProfilePic from "./upload-profile-pic";
 import { formatDate } from "@/lib/formatDate";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 interface BannerCardProps {
   className?: string;
@@ -21,8 +22,7 @@ interface BannerCardProps {
 const BannerCard = ({ className }: BannerCardProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const { userData } = useUser();
-  console.log("Userdata on Banner card:", userData);
+  const user = useCurrentUser();
   return (
     <div className={cn("w-full sticky top-[70px] z-10", className)}>
       <Container>
@@ -30,7 +30,7 @@ const BannerCard = ({ className }: BannerCardProps) => {
           <div className="m-8 flex flex-col lg:flex-row items-center justify-start">
             <div className="mr-4 relative">
               <div className="mb-4 lg:mb-0 text-center lg:text-left ">
-                {userData ? (
+                {user ? (
                   imagePreview ? (
                     <div className="relative">
                       <Image
@@ -55,8 +55,8 @@ const BannerCard = ({ className }: BannerCardProps) => {
                   ) : (
                     <Image
                       src={
-                        userData?.image
-                          ? userData?.image
+                        user?.image
+                          ? user?.image
                           : "/assets/default-student.jpg"
                       }
                       alt="Default Student"
@@ -79,37 +79,37 @@ const BannerCard = ({ className }: BannerCardProps) => {
 
             <div className="flex flex-col items-center lg:items-start">
               <div className="ml-0 lg:ml-4">
-                {userData?.name ? (
+                {user?.name ? (
                   <h1 className="text-3xl font-bold text-sky-100 mb-2">
-                    {userData?.name}
+                    {user?.name}
                   </h1>
                 ) : (
                   <Skeleton className="h-8 w-[300px] rounded-xl mb-2" />
                 )}
-                {userData?.email ? (
-                  <p className="text-sky-100 mb-2">{userData?.email}</p>
+                {user?.email ? (
+                  <p className="text-sky-100 mb-2">{user?.email}</p>
                 ) : (
                   <Skeleton className="h-5 w-[280px] rounded-xl mb-2" />
                 )}
-                {userData?.purchase ? (
+                {/* {user?.purchase ? (
                   <p className="text-sky-100 mr-4">
                     <FaBookBookmark className="inline w-4 h-4 mr-2" />
-                    {userData?.purchase?.length} Courses Enrolled
+                    {user?.purchase?.length} Courses Enrolled
                   </p>
                 ) : (
                   <Skeleton className="h-5 w-[240px] rounded-xl" />
-                )}
+                )} */}
 
                 <p className="text-sky-100 mr-4 mt-2 lg:mt-0">
                   <PiCertificate className="inline w-4 h-4 mr-2" />4
                   Certificates
                 </p>
 
-                {userData?.createdAt ? (
+                {user?.createdAt ? (
                   <p className="text-sky-100 mt-2 lg:mt-0 text-muted-foreground">
                     <SlCalender className="inline w-3 h-3 mr-2" />
                     <span className="mr-2">Registered on</span>
-                    {formatDate(userData?.createdAt)}
+                    {formatDate(user?.createdAt)}
                   </p>
                 ) : (
                   <Skeleton className="h-5 w-[250px] rounded-xl" />

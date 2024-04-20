@@ -2,8 +2,15 @@ import HeroBannerCard from "@/components/sections/hero-banner-card";
 import OurFounder from "@/components/sections/our-founder";
 import PopularCourses from "@/components/sections/popular-courses";
 import WhoAreWe from "@/components/sections/who-are-we";
-
-export const homeBanner = {
+type Banner = {
+  id: number;
+  title: string;
+  spanTxt: string;
+  description: string;
+  btnTxt: string;
+  image: string;
+};
+const homeBanner: Banner = {
   id: 1,
   title: "Learn & Earn from Home with Our Courses",
   spanTxt: "Job Opportunities for Vedique Health Coach",
@@ -12,6 +19,7 @@ export const homeBanner = {
   btnTxt: "Explore Courses",
   image: "/assets/slider/home.png",
 };
+
 const HomePage = () => {
   return (
     <div className="text-3xl">

@@ -28,14 +28,10 @@ interface NavbarItemProps {
 
 const NavbarItem = ({ item }: NavbarItemProps) => {
   const pathname = usePathname();
-  const router = useRouter();
 
   const isActive =
     pathname === item.href || pathname?.startsWith(`${item.href}/`);
 
-  const onClick = () => {
-    router.push(item.href);
-  };
   return (
     <NavigationMenu>
       <NavigationMenuList>

@@ -5,21 +5,21 @@ import { OrderDataTable } from "../_components/order-data-table";
 import { Order } from "@prisma/client";
 import { columns } from "../_components/columns";
 import axios from "axios";
-import { useUser } from "@/context/user-context";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const OrdersPage = () => {
-  const { userData } = useUser();
+  const user = useCurrentUser();
 
   const [orders, setOrders] = useState<Order[]>([]);
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const response = await axios.get(`/api/orders/${userData?.id}`);
+      const response = await axios.get(`/api/orders/${user?.id}`);
       const orders = response.data;
       setOrders(orders);
     };
     fetchOrders();
-  }, [userData?.id]);
+  }, [user?.id]);
 
   return (
     <div className="bg-white rounded-md shadow-sm transition p-4">

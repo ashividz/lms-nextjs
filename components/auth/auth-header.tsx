@@ -1,4 +1,6 @@
-import AdminLogo from "@/app/admin/_components/admin-logo";
+"use client";
+
+import Logo from "@/components/logo";
 
 interface AuthHeaderProps {
   label: string;
@@ -7,7 +9,7 @@ interface AuthHeaderProps {
 export const AuthHeader = ({ label }: AuthHeaderProps) => {
   return (
     <div className="flex flex-col gap-y-4 items-center justify-center">
-      <AdminLogo />
+      <Logo />
       <h2 className="text-md text-muted-foreground">{label}</h2>
     </div>
   );

@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 
 import { SearchInput } from "@/components/header/search-input";
 import Usermenu from "@/components/header/user-menu";
-import { UserProvider } from "@/context/user-context";
 
 export const NavbarRoutes = () => {
   const pathname = usePathname();
@@ -22,18 +21,17 @@ export const NavbarRoutes = () => {
           <SearchInput />
         </div>
       )}
-      <UserProvider>
-        <div className="flex gap-x-2 ml-auto">
-          <Link href="/">
-            <Button size="sm" variant="ghost">
-              <LogOut className="h-4 w-4 mr-2" />
-              Exit
-            </Button>
-          </Link>
 
-          <Usermenu />
-        </div>
-      </UserProvider>
+      <div className="flex gap-x-2 ml-auto">
+        <Link href="/">
+          <Button size="sm" variant="ghost">
+            <LogOut className="h-4 w-4 mr-2" />
+            Exit
+          </Button>
+        </Link>
+
+        <Usermenu />
+      </div>
     </>
   );
 };

@@ -74,7 +74,7 @@ async function generateCountrySeedData() {
     const countries = await database.country.findMany();
 
     // Format the data as per your requirement
-    const countrySeedData = countries.map((country) => ({
+    const countrySeedData = countries.map((country: any) => ({
       name: country.name,
       countryCode: country.countryCode,
       capital: country.capital || null,
@@ -103,7 +103,7 @@ async function generateStateSeedData() {
     const states = await database.state.findMany();
 
     // Format the data as per your requirement
-    const stateSeedData = states.map((state) => ({
+    const stateSeedData = states.map((state: any) => ({
       name: state.name,
       stateCode: state.stateCode,
       countryId: state.countryId,
@@ -128,7 +128,7 @@ async function generateCitySeedData() {
     const cities = await database.city.findMany();
 
     // Format the data as per your requirement
-    const citySeedData = cities.map((city) => ({
+    const citySeedData = cities.map((city: any) => ({
       name: city.name,
       stateId: city.stateId, // Assuming you have a stateId field in the city table
     }));

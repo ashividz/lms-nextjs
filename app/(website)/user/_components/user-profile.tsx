@@ -21,11 +21,11 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { useUser } from "@/context/user-context";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const UserProfile = () => {
   const router = useRouter();
-  const { updateUser, userData } = useUser();
+  const user = useCurrentUser();
   const form = useForm<z.infer<typeof userProfileSchema>>({
     resolver: zodResolver(userProfileSchema),
   });
@@ -41,29 +41,29 @@ const UserProfile = () => {
       bio: "",
     };
 
-    if (userData) {
-      const fullName = userData.name?.split(" ");
+    if (user) {
+      const fullName = user.name?.split(" ");
       if (fullName && fullName.length >= 1) {
         defaultValues.firstName = fullName[0];
       }
       if (fullName && fullName.length > 1) {
         defaultValues.lastName = fullName.slice(1).join(" ");
       }
-      defaultValues.email = userData.email ?? "";
-      defaultValues.phoneNumber = userData.phoneNumber ?? "";
-      defaultValues.qualification = userData.qualification ?? "";
-      defaultValues.profession = userData.profession ?? "";
-      defaultValues.bio = userData.bio ?? "";
+      defaultValues.email = user.email ?? "";
+      defaultValues.phoneNumber = user.phoneNumber ?? "";
+      defaultValues.qualification = user.qualification ?? "";
+      defaultValues.profession = user.profession ?? "";
+      defaultValues.bio = user.bio ?? "";
     }
 
     form.reset(defaultValues);
-  }, [userData, form]);
+  }, [user, form]);
 
   const onSubmit = async (values: z.infer<typeof userProfileSchema>) => {
     try {
       const response = await axios.patch("/api/user", values);
       router.push(`/user/profile/`);
-      updateUser();
+
       toast.success("Profile updated successfully", {
         position: "top-center",
         autoClose: 5000,
@@ -75,7 +75,7 @@ const UserProfile = () => {
       });
     }
   };
-  if (!userData) {
+  if (!user) {
     return (
       <div className="space-y-8 mt-4 w-full">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

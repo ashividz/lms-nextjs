@@ -1,14 +1,15 @@
 import { auth } from "@/auth";
+import { currentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
-    const session = await auth();
-    if (!session) {
+    const user = await currentUser();
+    if (!user) {
       return NextResponse.json("Unauthorized", { status: 401 });
     }
-    const userEmail = session?.user.email;
+    const userEmail = user.email;
     const userDetails = await db.user.findUnique({
       where: {
         email: userEmail!,

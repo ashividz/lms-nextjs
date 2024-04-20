@@ -1,7 +1,6 @@
 import { getCourses } from "@/actions/get-courses";
 import Container from "@/components/container";
 import CourseCard from "@/components/courses/course-card";
-import { db } from "@/lib/db";
 
 const PopularCourses = async () => {
   const courses = await getCourses({});

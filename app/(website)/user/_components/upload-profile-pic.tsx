@@ -1,8 +1,7 @@
-import { useUser } from "@/context/user-context";
-import axios, { AxiosProgressEvent } from "axios";
-import { CameraIcon, Loader2 } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import axios from "axios";
+import { CameraIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface UploadProfilePicProps {
@@ -15,8 +14,7 @@ const UploadProfilePic = ({
   setIsUploading,
 }: UploadProfilePicProps) => {
   const router = useRouter();
-  const { userData, updateUser } = useUser();
-
+  const user = useCurrentUser();
   async function resizeAndPreviewImage(
     file: File,
     width: number,
@@ -88,11 +86,11 @@ const UploadProfilePic = ({
     try {
       let formData = new FormData();
       formData.append("file", resizedFile);
-      if (userData && userData.id) {
-        formData.append("userId", userData?.id);
+      if (user && user.id) {
+        formData.append("userId", user?.id);
       }
-      if (userData && userData?.image) {
-        formData.append("previousImage", userData?.image);
+      if (user && user?.image) {
+        formData.append("previousImage", user?.image);
       }
 
       const response = await axios.post(
@@ -111,7 +109,6 @@ const UploadProfilePic = ({
         });
         return;
       } else if (response.status === 200) {
-        updateUser();
         router.refresh();
         setIsUploading(false);
         toast.success("Profile picture updated successfully", {

@@ -92,7 +92,7 @@ export const login = async (
       email,
       password,
       redirect: false,
-      //redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
+      // redirectTo: callbackUrl || DEFAULT_LOGIN_REDIRECT,
     });
     return { success: "Login success. Redirecting..." };
   } catch (error) {

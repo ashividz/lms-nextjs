@@ -188,8 +188,11 @@ body {
 .relative:hover .transition-transform {
   transform: translateX(5px); /* Adjust the value as needed */
 }
-
-.focus-visible\:ring-ring:focus-visible {
+*:focus {
+  outline: none !important; /* Outline ko hamesha hide karein */
+}
+.focus-visible\:ring-ring:focus-visible,
+.account-button > button:focus-visible {
   --tw-ring-color: none !important;
 }
 
