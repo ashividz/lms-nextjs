@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 
 import authConfig from "@/auth.config";
 import { getUserById } from "@/data/user";
-import { UserRole } from "@prisma/client";
+import { Purchase, UserRole } from "@prisma/client";
 import { getTwoFactorConfirmationByUserId } from "@/data/two-factor-confirmation";
 import { getAccountByUserId } from "@/data/account";
 
@@ -17,7 +17,7 @@ export const {
   signOut,
 } = NextAuth({
   pages: {
-    signIn: "/signin",
+    signIn: "/auth/login",
     error: "/auth/error",
   },
   events: {
@@ -77,6 +77,7 @@ export const {
         session.user.createdAt = token.createdAt as Date;
         session.user.updateAt = token.updateAt as Date;
         session.user.bio = token.bio as string;
+        session.user.purchases = token.purchases as Purchase[];
         session.user.isOAuth = token.isOAuth as boolean;
       }
 
@@ -86,7 +87,6 @@ export const {
       if (!token.sub) return token;
 
       const existingUser = await getUserById(token.sub);
-
       if (!existingUser) return token;
 
       const existingAccount = await getAccountByUserId(existingUser.id);
@@ -104,6 +104,7 @@ export const {
       token.createdAt = existingUser.createdAt;
       token.updateAt = existingUser.updateAt;
       token.bio = existingUser.bio;
+      token.purchases = existingUser.purchase;
 
       token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
 

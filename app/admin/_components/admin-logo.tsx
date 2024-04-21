@@ -9,7 +9,7 @@ const AdminLogo = () => {
       className="flex items-center justify-start mb-2"
     >
       <div className="relative w-[180px] h-14">
-        <Image alt="logo" src="/unitus-logo.png" priority fill sizes="180px" />
+        <Image alt="logo" src="/logo.png" priority fill sizes="180px" />
       </div>
     </Link>
   );

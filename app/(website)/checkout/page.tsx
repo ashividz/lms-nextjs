@@ -148,13 +148,13 @@ const CheckoutPage = () => {
         quantity: item.quantity,
         price: item.price,
         int_price: item.int_price,
-        sameAsBilling: sameAsBilling,
       }));
       const formDataWithCourses = {
         ...values,
         courses: coursesDetails,
         paymentMethod: selectedMethod,
         currency: userCurrency,
+        sameAsBilling: sameAsBilling,
       };
 
       const checkoutResponse = await axios.post(

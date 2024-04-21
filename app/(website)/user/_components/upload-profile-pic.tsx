@@ -3,7 +3,7 @@ import axios from "axios";
 import { CameraIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-
+import { useSession } from "next-auth/react";
 interface UploadProfilePicProps {
   setImagePreview: React.Dispatch<React.SetStateAction<string | null>>;
   setIsUploading: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,6 +15,7 @@ const UploadProfilePic = ({
 }: UploadProfilePicProps) => {
   const router = useRouter();
   const user = useCurrentUser();
+  const { update } = useSession();
   async function resizeAndPreviewImage(
     file: File,
     width: number,
@@ -102,6 +103,7 @@ const UploadProfilePic = ({
           },
         }
       );
+      update();
       if (response.status !== 200) {
         toast.error("Something went wrong while uploading file", {
           position: "top-center",

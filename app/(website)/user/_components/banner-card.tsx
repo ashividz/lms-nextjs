@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { CameraIcon, Loader2 } from "lucide-react";
 import { FaBookBookmark } from "react-icons/fa6";
@@ -21,8 +21,20 @@ interface BannerCardProps {
 
 const BannerCard = ({ className }: BannerCardProps) => {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [imageUrl, setImageUrl] = useState("/assets/default-student.jpg");
   const [isUploading, setIsUploading] = useState(false);
   const user = useCurrentUser();
+
+  useEffect(() => {
+    if (user?.image) {
+      const timestamp = new Date().getTime();
+      const imageUrl = user?.image
+        ? `${user.image}?t=${timestamp}`
+        : "/assets/default-student.jpg";
+      setImageUrl(imageUrl);
+    }
+  }, [user?.image]);
+
   return (
     <div className={cn("w-full sticky top-[70px] z-10", className)}>
       <Container>
@@ -54,12 +66,8 @@ const BannerCard = ({ className }: BannerCardProps) => {
                     </div>
                   ) : (
                     <Image
-                      src={
-                        user?.image
-                          ? user?.image
-                          : "/assets/default-student.jpg"
-                      }
-                      alt="Default Student"
+                      src={imageUrl}
+                      alt={user.name!}
                       width={180}
                       height={180}
                       priority
@@ -91,14 +99,14 @@ const BannerCard = ({ className }: BannerCardProps) => {
                 ) : (
                   <Skeleton className="h-5 w-[280px] rounded-xl mb-2" />
                 )}
-                {/* {user?.purchase ? (
+                {user?.purchases ? (
                   <p className="text-sky-100 mr-4">
                     <FaBookBookmark className="inline w-4 h-4 mr-2" />
-                    {user?.purchase?.length} Courses Enrolled
+                    {user?.purchases?.length} Courses Enrolled
                   </p>
                 ) : (
                   <Skeleton className="h-5 w-[240px] rounded-xl" />
-                )} */}
+                )}
 
                 <p className="text-sky-100 mr-4 mt-2 lg:mt-0">
                   <PiCertificate className="inline w-4 h-4 mr-2" />4

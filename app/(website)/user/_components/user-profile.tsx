@@ -23,9 +23,12 @@ import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
+import { useSession } from "next-auth/react";
+
 const UserProfile = () => {
   const router = useRouter();
   const user = useCurrentUser();
+  const { update } = useSession();
   const form = useForm<z.infer<typeof userProfileSchema>>({
     resolver: zodResolver(userProfileSchema),
   });
@@ -62,6 +65,7 @@ const UserProfile = () => {
   const onSubmit = async (values: z.infer<typeof userProfileSchema>) => {
     try {
       const response = await axios.patch("/api/user", values);
+      update();
       router.push(`/user/profile/`);
 
       toast.success("Profile updated successfully", {
@@ -163,7 +167,7 @@ const UserProfile = () => {
                   <FormItem>
                     <FormControl>
                       <Input
-                        disabled={true}
+                        disabled={user.isOAuth ? false : true}
                         placeholder="Phone Number"
                         {...field}
                         className="w-full h-12 rounded-md"

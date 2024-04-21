@@ -2,6 +2,7 @@ import HeroBannerCard from "@/components/sections/hero-banner-card";
 import OurFounder from "@/components/sections/our-founder";
 import PopularCourses from "@/components/sections/popular-courses";
 import WhoAreWe from "@/components/sections/who-are-we";
+import HomeTestimonial from "@/components/testimonials/home-testimonials";
 type Banner = {
   id: number;
   title: string;
@@ -30,6 +31,7 @@ const HomePage = () => {
       <OurFounder />
       <WhoAreWe />
       <PopularCourses />
+      <HomeTestimonial />
     </div>
   );
 };
