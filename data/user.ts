@@ -22,7 +22,16 @@ export const getUserByPhone = async (phoneNumber: string) => {
 
 export const getUserById = async (id: string) => {
   try {
-    const user = await db.user.findUnique({ where: { id } });
+    const user = await db.user.findUnique({
+      where: { id },
+      include: {
+        purchase: {
+          include: {
+            course: true,
+          },
+        },
+      },
+    });
 
     return user;
   } catch {

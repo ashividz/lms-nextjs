@@ -2,7 +2,7 @@
 
 import { FaUser } from "react-icons/fa";
 import { ExitIcon } from "@radix-ui/react-icons";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import {
   BookOpenText,
@@ -28,6 +28,7 @@ import Link from "next/link";
 import { LoginButton } from "@/components/auth/login-button";
 
 export const UserButton = () => {
+  const [imageUrl, setImageUrl] = useState("");
   useEffect(() => {
     const getSessionData = async () => {
       await getSession();
@@ -37,6 +38,13 @@ export const UserButton = () => {
   }, []);
   const user = useCurrentUser();
   const pathname = usePathname();
+  useEffect(() => {
+    if (user?.image) {
+      const timestamp = new Date().getTime();
+      const imageUrl = user?.image ? `${user.image}?t=${timestamp}` : "";
+      setImageUrl(imageUrl);
+    }
+  }, [user]);
 
   return (
     <>
@@ -51,7 +59,7 @@ export const UserButton = () => {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Avatar className="cursor-pointer border-2 border-sky-500">
-                <AvatarImage src={user?.image || ""} className="w-10 h-10" />
+                <AvatarImage src={imageUrl} className="w-10 h-10" />
                 <AvatarFallback className="bg-sky-500">
                   <FaUser className="text-white" />
                 </AvatarFallback>

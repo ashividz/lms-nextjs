@@ -1,4 +1,4 @@
-import { UserRole } from "@prisma/client";
+import { Purchase, UserRole } from "@prisma/client";
 import NextAuth, { type DefaultSession } from "next-auth";
 
 export type ExtendedUser = DefaultSession["user"] & {
@@ -11,6 +11,7 @@ export type ExtendedUser = DefaultSession["user"] & {
   createdAt?: Date;
   updateAt?: Date;
   role: UserRole;
+  purchases: Purchase[];
   isTwoFactorEnabled: boolean;
   isOAuth: boolean;
 };

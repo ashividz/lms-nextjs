@@ -40,35 +40,37 @@ export async function POST(req: Request) {
         },
       });
     }
-    const existingShippingAddress = await db.shippingAddress.findFirst({
-      where: {
-        userId: user.id,
-      },
-    });
-    if (existingShippingAddress) {
-      await db.shippingAddress.update({
+    if (!body.sameAsBilling) {
+      const existingShippingAddress = await db.shippingAddress.findFirst({
         where: {
-          id: existingShippingAddress.id,
-        },
-        data: {
-          address: body.shipping_address,
-          city: body.shipping_city,
-          country: body.shipping_country,
-          state: body.shipping_state,
-          zip: body.shipping_zip,
+          userId: user.id,
         },
       });
-    } else {
-      await db.shippingAddress.create({
-        data: {
-          address: body.shipping_address,
-          city: body.shipping_city,
-          country: body.shipping_country,
-          state: body.shipping_state,
-          zip: body.shipping_zip,
-          userId: user.id as string,
-        },
-      });
+      if (existingShippingAddress) {
+        await db.shippingAddress.update({
+          where: {
+            id: existingShippingAddress.id,
+          },
+          data: {
+            address: body.shipping_address,
+            city: body.shipping_city,
+            country: body.shipping_country,
+            state: body.shipping_state,
+            zip: body.shipping_zip,
+          },
+        });
+      } else {
+        await db.shippingAddress.create({
+          data: {
+            address: body.shipping_address,
+            city: body.shipping_city,
+            country: body.shipping_country,
+            state: body.shipping_state,
+            zip: body.shipping_zip,
+            userId: user.id as string,
+          },
+        });
+      }
     }
 
     let totalAmount = 0;

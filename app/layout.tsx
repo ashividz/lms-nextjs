@@ -11,6 +11,7 @@ import { CartProvider } from "@/context/cart-context";
 import { UserCountryProvider } from "@/context/user-country-context";
 
 export const metadata: Metadata = {
+  manifest: "/manifest.json",
   title: "Unitus LMS",
   description: "A Complete LMS for Unitus",
 };

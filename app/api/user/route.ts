@@ -6,6 +6,7 @@ import { NextResponse } from "next/server";
 export async function GET(req: Request) {
   try {
     const user = await currentUser();
+
     if (!user) {
       return NextResponse.json("Unauthorized", { status: 401 });
     }
@@ -39,7 +40,7 @@ export async function PATCH(req: Request) {
     const { firstName, lastName, ...values } = await req.json();
 
     const name = `${firstName} ${lastName}`;
-    const user = await db.user.update({
+    const updatedUser = await db.user.update({
       where: {
         email: userEmail!,
       },
@@ -48,7 +49,8 @@ export async function PATCH(req: Request) {
         ...values,
       },
     });
-    return NextResponse.json(user, { status: 200 });
+
+    return NextResponse.json(updatedUser, { status: 200 });
   } catch (error) {
     console.log("[USER_UPDATE]", error);
     return NextResponse.json("Internal Server Error", { status: 500 });
