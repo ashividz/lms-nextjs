@@ -1,3 +1,4 @@
+import Counter from "@/components/counter/counter";
 import HeroBannerCard from "@/components/sections/hero-banner-card";
 import OurFounder from "@/components/sections/our-founder";
 import PopularCourses from "@/components/sections/popular-courses";
@@ -32,6 +33,7 @@ const HomePage = () => {
       <WhoAreWe />
       <PopularCourses />
       <HomeTestimonial />
+      <Counter isDesc />
     </div>
   );
 };
