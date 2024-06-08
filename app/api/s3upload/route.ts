@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { deleteFolderFromS3, deleteImageFromS3 } from "@/lib/s3utils";
+import { deleteImageFromS3 } from "@/lib/s3utils";
 import { uploadFileToS3 } from "@/lib/s3utils";
 import { currentUser } from "@/lib/auth";
 
